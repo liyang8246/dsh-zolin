@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Zephyr 编码预设",
+    "description": "独立 Zephyr 人格、精简编码工具与遵循沙箱策略的 uv_run；沿用宿主模型选择。"
+  }
+}

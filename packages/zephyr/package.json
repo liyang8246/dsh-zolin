@@ -1,0 +1,38 @@
+{
+  "name": "dsh-zephyr-preset",
+  "type": "module",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Standalone Zephyr coding preset, persona and slim tool set for DeepSeek Harness.",
+  "exports": {
+    "./uv-run": "./lib/uv-run.js",
+    "./restrict": "./lib/restrict.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "README.md",
+    "cordis.patch.yml",
+    "icon.svg",
+    "lib/",
+    "locale/*.json"
+  ],
+  "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
+  "scripts": {
+    "build": "tsdown",
+    "test": "pnpm build && vitest run --config ../../vitest.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.1-rc.5",
+    "@deepseek-ai/dsh-shell": "0.2.1-rc.5",
+    "@deepseek-ai/dsh-tools": "0.2.1-rc.5",
+    "@deepseek-ai/dsh-working-directory": "0.2.1-rc.5"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  }
+}
