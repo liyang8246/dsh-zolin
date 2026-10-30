@@ -1,11 +1,11 @@
+import type { ChannelId, LoginAttempt, LoginInteraction, LoginNotice, LoginView } from '../shared/types.js'
 // @env node
 import type { Accounts } from './accounts.js'
-import type { ChannelId, LoginAttempt, LoginInteraction, LoginNotice, LoginView } from './types.js'
 import { randomUUID } from 'node:crypto'
-import { channelFor } from './channels.js'
-import { loginOpenAI } from './openai.js'
-import { loginOpenCode } from './opencode.js'
-import { text } from './validation.js'
+import { loginOpenAI } from '../providers/openai.js'
+import { loginOpenCode } from '../providers/opencode.js'
+import { channelFor } from '../shared/channels.js'
+import { text } from '../shared/validation.js'
 
 function view(attempt: LoginAttempt): LoginView {
   return {

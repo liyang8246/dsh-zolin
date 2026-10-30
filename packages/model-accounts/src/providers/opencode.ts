@@ -1,8 +1,8 @@
 // @env node
-import type { LoginInteraction, OAuthTokens } from './types.js'
+import type { LoginInteraction, OAuthTokens } from '../shared/types.js'
 import { setTimeout as delay } from 'node:timers/promises'
-import { fetchJSON, fetchResponse, jsonResponse, ProviderHTTPError } from './http.js'
-import { record, text, validateTokens } from './validation.js'
+import { fetchJSON, fetchResponse, jsonResponse, ProviderHTTPError } from '../shared/http.js'
+import { record, text, validateTokens } from '../shared/validation.js'
 
 const server = 'https://opencode.ai/console'
 const clientId = 'opencode-cli'

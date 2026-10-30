@@ -1,6 +1,6 @@
-import type { CatalogModel, StoredAccount } from './types.js'
-import { fetchJSON } from './http.js'
-import { record } from './validation.js'
+import type { CatalogModel, StoredAccount } from '../shared/types.js'
+import { fetchJSON } from '../shared/http.js'
+import { record } from '../shared/validation.js'
 
 // Codex clients ask this endpoint for the models the signed-in ChatGPT account can use; it
 // rejects a non-semver client_version, which otherwise only gates the payload shape.

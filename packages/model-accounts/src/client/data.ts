@@ -1,6 +1,6 @@
-import type { AccountSnapshot, AccountView, Channel, ChannelId, LoginNotice, LoginView, QuotaView, QuotaWindow } from '../types.js'
+import type { AccountSnapshot, AccountView, Channel, ChannelId, LoginNotice, LoginView, QuotaView, QuotaWindow } from '../shared/types.js'
 import type { ClientRequest, LoginRequest, MeasuredQuotaWindow } from './types.js'
-import { channels } from '../channels.js'
+import { channels } from '../shared/channels.js'
 import { authorizationHosts, quotaPeriods } from './constants.js'
 
 export function isObject(value: unknown): value is Record<string, unknown> {

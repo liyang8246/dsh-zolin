@@ -1,4 +1,4 @@
-import type { ChannelId } from '../types.js'
+import type { ChannelId } from '../shared/types.js'
 
 export const en = {
   title: 'Model Accounts',

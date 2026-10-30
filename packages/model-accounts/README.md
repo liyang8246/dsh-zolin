@@ -52,13 +52,26 @@ pnpm --filter dsh-model-accounts build
 pnpm models:update
 ```
 
-关键文件：
+源码按职责分组；根目录只保留 Host 与 Client 的公开入口：
 
-- [accounts.ts](src/accounts.ts)：唯一凭据记录、验证、原子变更与刷新锁。
-- [logins.ts](src/logins.ts)：用户登录状态机、超时与取消。
-- [service.ts](src/service.ts)：账号操作、模型目录与额度刷新。
-- [index.ts](src/index.ts)：Host 工具、受宿主鉴权的 RPC 与模型路由生命周期。
-- [client.tsx](src/client.tsx)：类型化 React 界面；[store.ts](src/client/store.ts) 统一前端快照。
-- [update-models.ts](scripts/update-models.ts)：显式更新与离线完整性校验。
+```text
+src/
+├── index.ts                 # Host 注册、工具与 RPC
+├── client.tsx               # Client 加载、生命周期与插槽注册
+├── host/                    # 凭据存储、登录状态机、服务编排
+├── providers/               # OAuth、模型目录与供应商额度
+│   └── commandcode/         # CLI 请求、事件、流、额度与 HTTP
+├── transport/               # Harness 适配、历史转换与流事件映射
+├── client/                  # RPC、账号设置页、额度视图与快照 store
+└── shared/                  # 渠道、数据契约、校验与 HTTP/错误处理
+```
+
+- [accounts.ts](src/host/accounts.ts)：唯一凭据记录、验证、原子变更与刷新锁。
+- [logins.ts](src/host/logins.ts)：用户登录状态机、超时与取消。
+- [service.ts](src/host/service.ts)：账号操作、模型目录与额度刷新。
+- [adapter.ts](src/transport/adapter.ts)：模型路由与请求准备；历史转换和流处理不混入注册逻辑。
+- [request.ts](src/providers/commandcode/request.ts)、[events.ts](src/providers/commandcode/events.ts)、[stream.ts](src/providers/commandcode/stream.ts)、[quota.ts](src/providers/commandcode/quota.ts)：CommandCode 的独立协议边界。
+- [accounts-page.tsx](src/client/accounts-page.tsx)：账号界面；[api.ts](src/client/api.ts) 负责 RPC，[store.ts](src/client/store.ts) 统一前端快照。React 仍由 Harness 注入，不打包第二套运行时。
+- [update-models.ts](scripts/update-models.ts)：显式更新与离线完整性校验；快照位于 [catalog.generated.ts](src/providers/catalog.generated.ts)，不手工修改。
 
 第三方协议参考固定在仓库根的 [clonedeps lock](../../.agents/clonedeps/lock.json)。源码可按 lock 同步到只读克隆目录；不在克隆中运行代码。

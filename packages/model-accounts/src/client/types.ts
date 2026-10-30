@@ -1,4 +1,4 @@
-import type { AccountSnapshot, ChannelId, QuotaView, QuotaWindow } from '../types.js'
+import type { AccountSnapshot, ChannelId, QuotaView, QuotaWindow } from '../shared/types.js'
 
 export type SnapshotRequest
   = | { action: 'list' | 'refresh_quota', id?: string }

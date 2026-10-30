@@ -1,4 +1,4 @@
-import type { AccountSnapshot } from '../types.js'
+import type { AccountSnapshot } from '../shared/types.js'
 import type { AccountStore } from './types.js'
 
 export function createAccountStore(load: () => Promise<AccountSnapshot>): AccountStore {

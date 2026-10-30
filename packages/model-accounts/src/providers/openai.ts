@@ -1,8 +1,8 @@
 // @env node
-import type { LoginInteraction, LoginNotice, OAuthTokens } from './types.js'
+import type { LoginInteraction, LoginNotice, OAuthTokens } from '../shared/types.js'
 import { registerBunOAuthFlows } from '@earendil-works/pi-ai/bun-oauth'
 import { openaiCodexProvider } from '@earendil-works/pi-ai/providers/openai-codex'
-import { validateTokens } from './validation.js'
+import { validateTokens } from '../shared/validation.js'
 
 // pi's opaque OAuth import cannot resolve from the bundled Host artifact.
 registerBunOAuthFlows()

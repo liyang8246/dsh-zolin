@@ -1,6 +1,6 @@
-import type { QuotaView, QuotaWindow, StoredAccount } from './types.js'
-import { fetchJSON, ProviderHTTPError } from './http.js'
-import { record } from './validation.js'
+import type { QuotaView, QuotaWindow, StoredAccount } from '../shared/types.js'
+import { fetchJSON, ProviderHTTPError } from '../shared/http.js'
+import { record } from '../shared/validation.js'
 
 function percent(value: unknown): number | undefined {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0

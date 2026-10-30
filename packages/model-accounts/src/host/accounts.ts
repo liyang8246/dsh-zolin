@@ -1,10 +1,10 @@
 // @env node
 import type { Context } from '@deepseek-ai/cordis'
 import type { CredentialKey, CredentialRecord } from '@deepseek-ai/dsh-credentials'
-import type { AccountState, AccountView, ChannelId, OAuthTokens, QuotaView, QuotaWindow, StoredAccount } from './types.js'
+import type { AccountState, AccountView, ChannelId, OAuthTokens, QuotaView, QuotaWindow, StoredAccount } from '../shared/types.js'
 import { randomUUID } from 'node:crypto'
-import { channelFor } from './channels.js'
-import { record, text, validateTokens } from './validation.js'
+import { channelFor } from '../shared/channels.js'
+import { record, text, validateTokens } from '../shared/validation.js'
 
 // Existing installations own this record independently of the package name.
 export const stateKey = 'zephyr/accounts'
