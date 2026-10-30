@@ -2,8 +2,8 @@
 
 自用插件，基于 DeepSeek Harness，两个包可独立安装：
 
-- [Zephyr 编码预设](packages/dsh-zephyr/README.md)
-- [模型账号管理](packages/dsh-accounts/README.md)：支持 Codex、OpenCode Go 和 CommandCode Go
+- [Zephyr 编码预设](packages/dsh-zephyr)
+- [模型账号管理](packages/dsh-accounts)：支持 Codex、OpenCode Go 和 CommandCode Go
 
 ## 构建与安装
 

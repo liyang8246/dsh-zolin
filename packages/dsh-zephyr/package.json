@@ -13,7 +13,6 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "README.md",
     "cordis.patch.yml",
     "icon.svg",
     "lib/",
