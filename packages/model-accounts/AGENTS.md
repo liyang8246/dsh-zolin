@@ -15,7 +15,7 @@ Independent account bundle in the dsh-zolin monorepo. Read the root AGENTS.md to
 <!-- clonedeps head -->
 ## Cloned Dependency Source
 
-Read-only dependency sources are materialized under `.agents/clonedeps/repos/`. Keep this table in sync with `.agents/clonedeps/lock.json`; update the lock and run clonedeps `sync` when changing pinned references. Do not edit or execute cloned dependencies.
+Read-only dependency source repositories are available under `.agents/clonedeps/repos/` for inspection. Do not edit these clones. Keep this list in sync with `.agents/clonedeps/lock.json`: when a dependency is added, removed or upgraded, update the lock file and run `sync`.
 
 | Dependency | Version | Path |
 | --- | --- | --- |

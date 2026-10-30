@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "clonedeps": {
+      "source": "liyang8246/skills",
+      "sourceType": "github",
+      "skillPath": "skills/clonedeps/SKILL.md",
+      "computedHash": "8f8476f4c68986bb4fe2d9135e1ed601f5d11ca391773502cec5ab2abc0e4f9d"
+    }
+  }
+}

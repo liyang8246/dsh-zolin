@@ -5,4 +5,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   cacheDir: join(tmpdir(), 'dsh-zolin-vitest', basename(process.cwd())),
+  test: {
+    include: ['tests/**/*.test.ts'],
+  },
 })

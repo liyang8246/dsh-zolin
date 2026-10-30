@@ -12,7 +12,7 @@
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
-  "files": ["README.md", "THIRD_PARTY_NOTICES.md", "cordis.patch.yml", "icon.svg", "lib/", "locale/*.json"],
+  "files": ["README.md", "cordis.patch.yml", "icon.svg", "lib/", "locale/*.json"],
   "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
   "scripts": {
     "build": "node scripts/update-models.ts --check && tsdown && node scripts/build-client.ts",
