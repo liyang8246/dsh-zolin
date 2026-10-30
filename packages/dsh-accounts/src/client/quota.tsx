@@ -10,7 +10,7 @@ export function createQuotaComponents(React: typeof import('react'), t: (path: s
       ? measuredWindows(quota.windows)
       : []
     return (
-      <div>
+      <div className={windows.length ? undefined : 'zph-quota-unavailable'}>
         {windows.length
           ? (
               <div className="zph-quota">
