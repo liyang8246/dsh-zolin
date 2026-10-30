@@ -15,5 +15,3 @@ pnpm build
 ```
 
 构建后，在 Harness Plugin Manager 中分别安装 `packages/zephyr` 或 `packages/model-accounts`。
-
-**不要与旧版 `dsh-zephyr` 同时启用**，以免重复注册和凭据刷新冲突。
