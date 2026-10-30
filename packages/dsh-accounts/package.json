@@ -2,8 +2,8 @@
   "name": "@liyang8246/dsh-accounts",
   "type": "module",
   "version": "0.1.1",
-  "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-accounts" },
   "description": "Independent multi-account Codex, OpenCode Go and CommandCode Go plugin for DeepSeek Harness.",
+  "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-accounts" },
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
