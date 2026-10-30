@@ -48,7 +48,7 @@ Host 每分钟顺序刷新已保存账号，两账号间隔五秒；手动刷新
 ```sh
 pnpm install --frozen-lockfile
 pnpm run ci
-pnpm --filter dsh-model-accounts build
+pnpm --filter @liyang8246/dsh-accounts build
 pnpm models:update
 ```
 

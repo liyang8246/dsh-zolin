@@ -65,7 +65,7 @@
           - id: tool-fs
             name: '@deepseek-ai/dsh-tool-fs'
           - id: zephyr-tools
-            name: dsh-zephyr-preset/restrict
+            name: '@liyang8246/dsh-zephyr/restrict'
           - id: tool-pwsh
             name: '@deepseek-ai/dsh-tool-pwsh'
             disabled: !!js process.platform !== 'win32'
@@ -73,7 +73,7 @@
             name: '@deepseek-ai/dsh-tool-bash'
             disabled: !!js process.platform === 'win32'
           - id: uv-run
-            name: dsh-zephyr-preset/uv-run
+            name: '@liyang8246/dsh-zephyr/uv-run'
           - id: tool-jobs
             name: '@deepseek-ai/dsh-tool-jobs'
           - id: zephyr-subagent

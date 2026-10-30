@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "pnpm -r typecheck",
-    "models:update": "pnpm --filter dsh-model-accounts models:update",
+    "models:update": "pnpm --filter @liyang8246/dsh-accounts models:update",
     "ci": "pnpm lint && pnpm typecheck && pnpm build"
   },
   "devDependencies": {

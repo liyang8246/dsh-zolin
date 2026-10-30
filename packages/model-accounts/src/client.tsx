@@ -20,7 +20,7 @@ if (!loader || typeof loader.load !== 'function')
   throw new Error('Harness module loader is unavailable')
 
 loader.load({
-  id: 'dsh-model-accounts',
+  id: '@liyang8246/dsh-accounts',
   factory(require) {
     const React = require('react') as typeof import('react')
     return {

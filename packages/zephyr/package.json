@@ -1,8 +1,7 @@
 {
-  "name": "dsh-zephyr-preset",
+  "name": "@liyang8246/dsh-zephyr",
   "type": "module",
-  "version": "0.2.0",
-  "private": true,
+  "version": "0.1.0",
   "description": "Standalone Zephyr coding preset, persona and slim tool set for DeepSeek Harness.",
   "exports": {
     "./uv-run": "./lib/uv-run.js",
