@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-zephyr",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Standalone Zephyr coding preset, persona and slim tool set for DeepSeek Harness.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-zephyr" },
   "exports": {
