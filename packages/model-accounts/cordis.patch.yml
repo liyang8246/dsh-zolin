@@ -1,0 +1,3 @@
+- insert:
+    - id: zephyr-model-accounts
+      name: dsh-model-accounts
