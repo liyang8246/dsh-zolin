@@ -61,4 +61,4 @@ pnpm models:update
 - [client.tsx](src/client.tsx)：类型化 React 界面；[store.ts](src/client/store.ts) 统一前端快照。
 - [update-models.ts](scripts/update-models.ts)：显式更新与离线完整性校验。
 
-第三方协议参考固定在 [clonedeps lock](.agents/clonedeps/lock.json)。源码可按 lock 同步到只读克隆目录；不在克隆中运行代码。
+第三方协议参考固定在仓库根的 [clonedeps lock](../../.agents/clonedeps/lock.json)。源码可按 lock 同步到只读克隆目录；不在克隆中运行代码。

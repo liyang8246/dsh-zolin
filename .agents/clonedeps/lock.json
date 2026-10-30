@@ -1,0 +1,26 @@
+[
+  {
+    "name": "@deepseek-ai/dsh-root",
+    "resolvedVersion": "0.2.1-rc.5",
+    "repoUrl": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "ref": "b830ec950faba0a46dda564be3e2d854afed94f1"
+  },
+  {
+    "name": "opencode",
+    "resolvedVersion": "2.2.0",
+    "repoUrl": "https://github.com/anomalyco/opencode.git",
+    "ref": "510aa79d075c32e75f85b7774ff7390370c22b18"
+  },
+  {
+    "name": "pi-monorepo",
+    "resolvedVersion": "0.0.3",
+    "repoUrl": "https://github.com/earendil-works/pi.git",
+    "ref": "abe508e1b89912adde45528136c3221eb69acdd7"
+  },
+  {
+    "name": "codex-monorepo",
+    "resolvedVersion": "0.166.0",
+    "repoUrl": "https://github.com/openai/codex.git",
+    "ref": "6ff1e1ca3b30fc8b914720681fcf5fe62e95f856"
+  }
+]

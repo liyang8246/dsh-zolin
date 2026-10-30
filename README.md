@@ -22,6 +22,7 @@ pnpm build
 - TypeScript 固定 6.x：当前 ESLint TypeScript 解析器不支持 7.x。
 - `pnpm test` 分别构建两包，再运行 Vitest；共享测试配置将缓存放在系统临时目录。
 - `pnpm models:update` 才联网更新 models.dev 快照；正常构建不访问供应商，不读取真实账号。
+- 上游源码（Harness、opencode、pi、codex）固定在 [.agents/clonedeps/lock.json](.agents/clonedeps/lock.json)，只读克隆不入库，说明见 [SOURCES.md](.agents/clonedeps/SOURCES.md)。
 
 ## 安装与旧版切换
 
