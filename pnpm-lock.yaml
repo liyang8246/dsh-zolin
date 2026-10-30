@@ -30,7 +30,7 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
-  packages/model-accounts:
+  packages/dsh-accounts:
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: 4.0.5
@@ -78,7 +78,7 @@ importers:
         specifier: 1.1.0
         version: 1.1.0(@aws-sdk/credential-provider-node@3.972.90)(@smithy/signature-v4@5.7.4)(undici@8.11.2)(ws@8.22.0)(zod@4.6.7)
 
-  packages/zephyr:
+  packages/dsh-zephyr:
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: 4.0.5

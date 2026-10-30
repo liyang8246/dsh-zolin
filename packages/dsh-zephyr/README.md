@@ -34,7 +34,7 @@ pnpm --filter @liyang8246/dsh-zephyr build
 
 ## 安装与切换
 
-构建后，经用户授权使用 Harness `plugin_manager` 的 `install_bundle`，目标为本包目录（`packages/zephyr`），不是 monorepo 根。不要手改真实 profile。
+构建后，经用户授权使用 Harness `plugin_manager` 的 `install_bundle`，目标为本包目录（`packages/dsh-zephyr`），不是 monorepo 根。不要手改真实 profile。
 
 **不要与旧版 `dsh-zephyr` 合并包同时启用**：两者保持同一 `zephyr` preset 标识，会重复注册。迁移时先停用或移除旧 bundle。
 

@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-accounts",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Independent multi-account Codex, OpenCode Go and CommandCode Go plugin for DeepSeek Harness.",
   "exports": {
     ".": "./lib/index.js",

@@ -2,8 +2,8 @@
 
 自用插件，基于 DeepSeek Harness，两个包可独立安装：
 
-- [Zephyr 编码预设](packages/zephyr/README.md)
-- [模型账号管理](packages/model-accounts/README.md)：支持 Codex、OpenCode Go 和 CommandCode Go
+- [Zephyr 编码预设](packages/dsh-zephyr/README.md)
+- [模型账号管理](packages/dsh-accounts/README.md)：支持 Codex、OpenCode Go 和 CommandCode Go
 
 ## 构建与安装
 
@@ -14,4 +14,4 @@ pnpm install --frozen-lockfile
 pnpm build
 ```
 
-构建后，在 Harness Plugin Manager 中分别安装 `packages/zephyr` 或 `packages/model-accounts`。
+构建后，在 Harness Plugin Manager 中分别安装 `packages/dsh-zephyr` 或 `packages/dsh-accounts`。
