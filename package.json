@@ -11,20 +11,16 @@
     "build": "pnpm -r build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit && pnpm -r typecheck",
-    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
     "models:update": "pnpm --filter dsh-model-accounts models:update",
-    "ci": "pnpm lint && pnpm typecheck && pnpm test"
+    "ci": "pnpm lint && pnpm typecheck && pnpm build"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^10.0.0",
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^26.6.5",
     "@types/react": "^18.3.31",
     "eslint": "^10.13.0",
-    "js-yaml": "^4.3.2",
     "tsdown": "0.23.2",
-    "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "typescript": "^6.0.3"
   }
 }

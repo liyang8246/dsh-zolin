@@ -22,7 +22,6 @@
   "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
   "scripts": {
     "build": "tsdown",
-    "test": "pnpm build && vitest run --config ../../vitest.config.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

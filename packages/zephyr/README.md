@@ -30,7 +30,7 @@ pnpm run ci
 pnpm --filter dsh-zephyr-preset build
 ```
 
-构建仅生成 `lib/uv-run.js`、`lib/restrict.js` 及 bundler 共享 chunk。测试 mock Host 服务，不启动真实 uv、不访问账号或 profile；Vitest 缓存统一位于系统临时目录。人格哈希、patch 表达式/分组及无账号耦合均有断言。
+构建仅生成 `lib/uv-run.js`、`lib/restrict.js` 及 bundler 共享 chunk。仓库不包含单元测试，行为需在 Harness 新会话中验证。
 
 ## 安装与切换
 
@@ -38,4 +38,4 @@ pnpm --filter dsh-zephyr-preset build
 
 **不要与原 `dsh-zephyr` bundle 同时启用**：两者保持同一 `zephyr` preset 标识，会重复注册。迁移需要另行授权停用/移除旧 bundle；本仓库准备与构建本身不影响原库、现有插件或会话。
 
-安装后的实际激活、工具清单和行为需在新会话验证；源码测试不能代替 Harness 集成验证。
+安装后的实际激活、工具清单和行为需在新会话验证。

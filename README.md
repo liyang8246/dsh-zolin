@@ -17,10 +17,10 @@ pnpm run ci
 pnpm build
 ```
 
-- 根目录统一 ESLint（`@antfu/eslint-config` 原样默认配置）、TypeScript、测试入口和锁文件。
-- 业务代码、浏览器界面、构建/测试脚本使用 TypeScript；唯一 JavaScript 源配置是官方推荐的三行 ESLint 入口。
+- 根目录统一 ESLint（`@antfu/eslint-config` 原样默认配置）、TypeScript 和锁文件。
+- 业务代码、浏览器界面、构建脚本使用 TypeScript；唯一 JavaScript 源配置是官方推荐的三行 ESLint 入口。
 - TypeScript 固定 6.x：当前 ESLint TypeScript 解析器不支持 7.x。
-- `pnpm test` 分别构建两包，再运行 Vitest；共享测试配置将缓存放在系统临时目录。
+- `pnpm ci` 依次执行 lint、类型检查和两包构建。
 - `pnpm models:update` 才联网更新 models.dev 快照；正常构建不访问供应商，不读取真实账号。
 - 上游源码（Harness、opencode、pi、codex）固定在 [.agents/clonedeps/lock.json](.agents/clonedeps/lock.json)，只读克隆不入库，说明见 [SOURCES.md](.agents/clonedeps/SOURCES.md)。
 

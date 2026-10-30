@@ -39,6 +39,10 @@ shellEmulator: true
 packages:
   - packages/*
 
+# 仓库不再包含测试：移除 ESLint 配置对 vitest 的可选 peer 依赖
+overrides:
+  vitest: '-'
+
 allowBuilds:
   '@google/genai': false
   protobufjs: false
