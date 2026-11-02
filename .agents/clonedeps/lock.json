@@ -22,5 +22,11 @@
     "resolvedVersion": "0.166.0",
     "repoUrl": "https://github.com/openai/codex.git",
     "ref": "6ff1e1ca3b30fc8b914720681fcf5fe62e95f856"
+  },
+  {
+    "name": "cockpit-tools",
+    "resolvedVersion": "1.3.78",
+    "repoUrl": "https://github.com/jlcodes99/cockpit-tools.git",
+    "ref": "02cbd8ddbc58eb54fad44145726db606d7bdf770"
   }
 ]
