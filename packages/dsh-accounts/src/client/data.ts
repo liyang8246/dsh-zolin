@@ -37,7 +37,7 @@ function isQuotaWindow(value: unknown): value is QuotaWindow {
 function isQuota(value: unknown): value is QuotaView {
   return isObject(value) && (value.status === 'ok' || value.status === 'unavailable' || value.status === 'error')
     && typeof value.fetchedAt === 'string' && Array.isArray(value.windows) && value.windows.every(isQuotaWindow)
-    && optionalString(value.reason) && optionalString(value.plan)
+    && optionalString(value.reason) && optionalString(value.plan) && optionalNumber(value.resetCredits)
 }
 
 function isAccount(value: unknown): value is AccountView {

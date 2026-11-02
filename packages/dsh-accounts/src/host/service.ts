@@ -6,7 +6,7 @@ import { fetchCodexModels } from '../providers/codex-models.js'
 import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
 import { refreshOpenCode } from '../providers/opencode.js'
-import { fetchQuota } from '../providers/quota.js'
+import { consumeCodexResetCredit, fetchQuota } from '../providers/quota.js'
 import { channelFor, channels } from '../shared/channels.js'
 import { safeError } from '../shared/errors.js'
 import { record, text } from '../shared/validation.js'
@@ -114,6 +114,17 @@ export class ModelAccountsService {
     }
   }
 
+  private async resetCredit(id: string, signal?: AbortSignal): Promise<void> {
+    const view = (await this.accounts.list()).find(account => account.id === id)
+    if (!view)
+      throw new Error('Account not found')
+    if (view.channel !== 'openai-codex')
+      throw new Error('Only OpenAI Codex accounts have reset credits')
+    const account = await this.accounts.resolve(view.channel, signal, id)
+    await consumeCodexResetCredit(account, signal)
+    await this.refreshQuota(id, signal)
+  }
+
   async dispatch(raw: unknown, origin: 'ui' | 'agent', signal?: AbortSignal): Promise<unknown> {
     if (this.controller.signal.aborted)
       throw new Error('Plugin is unloading')
@@ -143,6 +154,13 @@ export class ModelAccountsService {
         await this.accounts.remove(id)
         this.quotas.delete(id)
         this.onChange?.()
+        break
+      }
+      case 'reset_credit': {
+        // Spending an account's reset credit stays user-only, like authentication.
+        if (origin !== 'ui')
+          throw new Error('Resetting quota is user-only; open Settings → Model Accounts')
+        await this.resetCredit(text(args.id, 'account id'), signal)
         break
       }
       case 'refresh_quota': {

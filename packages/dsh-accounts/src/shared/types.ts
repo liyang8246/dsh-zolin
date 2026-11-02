@@ -56,6 +56,8 @@ export interface QuotaView {
   windows: QuotaWindow[]
   reason?: string
   plan?: string
+  /** Codex reset credits left; one consumes the 5-hour window. */
+  resetCredits?: number
 }
 
 export interface AccountView {

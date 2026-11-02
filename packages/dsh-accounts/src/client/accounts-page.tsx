@@ -30,6 +30,7 @@ export function createAccountsPage(
     const [answer, setAnswer] = React.useState('')
     const [paste, setPaste] = React.useState(false)
     const [removing, setRemoving] = React.useState<string | null>(null)
+    const [resetting, setResetting] = React.useState<string | null>(null)
     const mounted = React.useRef(true)
     React.useEffect(() => {
       mounted.current = true
@@ -112,6 +113,8 @@ export function createAccountsPage(
         if ('accounts' in value) {
           if (mounted.current && request.action === 'remove')
             setRemoving(null)
+          if (mounted.current && request.action === 'reset_credit')
+            setResetting(null)
           if (mounted.current && request.action === 'add_key') {
             setApiKey('')
             setForm(null)
@@ -237,6 +240,17 @@ export function createAccountsPage(
                         </label>
                         {account.quota?.plan && <span className="zph-pill">{account.quota.plan}</span>}
                         <div className="zph-actions">
+                          {typeof account.quota?.resetCredits === 'number' && (
+                            <button
+                              type="button"
+                              disabled={busy || !account.quota.resetCredits}
+                              aria-expanded={resetting === account.id}
+                              aria-controls={`zph-reset-${account.id}`}
+                              onClick={() => setResetting(account.id)}
+                            >
+                              {`${t('resetCredit')} (${account.quota.resetCredits})`}
+                            </button>
+                          )}
                           {button(t('refresh'), { action: 'refresh_quota', id: account.id })}
                           <button
                             type="button"
@@ -249,6 +263,13 @@ export function createAccountsPage(
                           </button>
                         </div>
                       </div>
+                      {resetting === account.id && (
+                        <div id={`zph-reset-${account.id}`} className="zph-row" role="group" aria-label={t('confirmResetCredit')}>
+                          <span>{t('confirmResetCredit')}</span>
+                          {button(t('resetCredit'), { action: 'reset_credit', id: account.id })}
+                          <button type="button" disabled={busy} onClick={() => setResetting(null)}>{t('cancel')}</button>
+                        </div>
+                      )}
                       {removing === account.id && (
                         <div id={`zph-remove-${account.id}`} className="zph-row" role="group" aria-label={t('confirmRemove')}>
                           <span>{t('confirmRemove')}</span>

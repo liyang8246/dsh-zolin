@@ -83,6 +83,8 @@ function readQuotas(value: unknown): Record<string, QuotaView> {
       if (typeof view[key] === 'string')
         quota[key] = view[key]
     }
+    if (typeof view.resetCredits === 'number' && Number.isFinite(view.resetCredits) && view.resetCredits >= 0)
+      quota.resetCredits = view.resetCredits
     return [
       [id, quota],
     ]

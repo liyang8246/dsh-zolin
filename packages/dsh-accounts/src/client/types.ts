@@ -5,6 +5,7 @@ export type SnapshotRequest
     | { action: 'activate', channel: ChannelId, id: string }
     | { action: 'deactivate', channel: ChannelId }
     | { action: 'remove', id: string }
+    | { action: 'reset_credit', id: string }
     | { action: 'add_key', channel: ChannelId, label: string, key: string }
 
 export type LoginRequest
