@@ -197,14 +197,19 @@ export class SessionFolder {
         const modelBucket = this.modelBucket(accumulator, time, model)
         modelBucket.callCount += 1
         if (usage) {
+          // codetime counts cached tokens inside `inputTokens` and repeats them
+          // in `cachedInputTokens`; DSH reports them separately.
+          const cacheRead = usage.cacheReadTokens ?? 0
+          const cacheWrite = usage.cacheWriteTokens ?? 0
+          const inputTokens = usage.inputTokens + cacheRead + cacheWrite
           const tokens = {
-            inputTokens: usage.inputTokens,
-            cachedInputTokens: 0,
-            cacheCreationInputTokens: usage.cacheWriteTokens ?? 0,
-            cacheReadInputTokens: usage.cacheReadTokens ?? 0,
+            inputTokens,
+            cachedInputTokens: cacheRead + cacheWrite,
+            cacheCreationInputTokens: cacheWrite,
+            cacheReadInputTokens: cacheRead,
             outputTokens: usage.outputTokens,
             reasoningOutputTokens: usage.reasoningTokens ?? 0,
-            totalTokens: usage.totalTokens ?? usage.inputTokens + usage.outputTokens,
+            totalTokens: usage.totalTokens ?? inputTokens + usage.outputTokens,
           }
           addTokens(modelRollup, tokens)
           addTokens(modelBucket, tokens)
