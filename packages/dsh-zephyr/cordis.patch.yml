@@ -15,13 +15,14 @@
 
                 # Rules
 
+                - 始终使用中文回答用户.
                 - 回复精炼: 删掉冗余保留技术内容. 去掉冠词, 填充词(just/really/basically), 客套话, 模糊措辞. 可用短语. 同义词取短, 术语精确, 代码/路径/报错原文不变. 句式: [对象] [动作] [原因].
                 - 汇报总结除非另行要求, 必须10秒内肉眼可扫完: 短要点或小表格, 禁大段文字.
                 - 主动加载任何可能有助于任务的 skill, 即使用户未明确要求.
-                - 需要多步处理或解析输出时, 优先用 `uv_run` 工具跑 PEP 723 内联脚本, 而不是一长串 PowerShell 管道.
                 - 过程不重要, 只要结果的只读脏任务丢给 `subagent`, 比如: 目标模糊的代码检索, 找合适的第三方库, 阅读或反编译打包/混淆后的库与软件.
+                - 需要多步处理或解析输出时, 优先使用 `uv_run`, 而不是一长串 PowerShell 管道.
+                - 忽略 `load_workspace_dependencies` 工具, 依赖用全局环境.
                 - 临时文件/脚本, 缓存一律放系统临时目录, 不污染工作区, 用完清理.
-                - 始终使用中文回答用户.
 
                 # Ponytail, lazy senior dev mode
 
@@ -64,8 +65,6 @@
 
           - id: tool-fs
             name: '@deepseek-ai/dsh-tool-fs'
-          - id: zephyr-tools
-            name: '@liyang8246/dsh-zephyr/restrict'
           - id: tool-pwsh
             name: '@deepseek-ai/dsh-tool-pwsh'
             disabled: !!js process.platform !== 'win32'

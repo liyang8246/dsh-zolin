@@ -3,7 +3,6 @@ import { defineConfig } from 'tsdown'
 export default defineConfig({
   entry: {
     'uv-run': 'src/uv-run/index.ts',
-    'restrict': 'src/restrict.ts',
   },
   outDir: 'lib',
   format: 'esm',

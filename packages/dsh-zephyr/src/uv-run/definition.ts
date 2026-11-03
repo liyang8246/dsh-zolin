@@ -5,10 +5,8 @@ import { DEFAULT_TIMEOUT_MS, MAX_TIMEOUT_MS, runUv } from './run.js'
 
 const DESCRIPTION = [
   'Run a Python script with `uv run --no-project -`.',
-  'Pass the complete script as `code`; it is delivered on stdin, so quotes, backslashes, newlines, and Unicode need no shell escaping.',
-  'Without a PEP 723 header, uv uses the first Python on PATH, so imports outside the standard library may fail.',
-  'To install dependencies, include a PEP 723 header: start with `# /// script`, list dependencies in `# dependencies = [...]`, then close with `# ///`; uv creates an isolated environment for that script.',
-  'Non-zero exits are reported as `[exit code: N]`; sandbox denials are reported as `[sandbox: ...]`.',
+  'The script arrives on stdin as `code`, so quotes, backslashes and newlines need no shell escaping.',
+  'Third-party imports need a PEP 723 header.',
 ].join(' ')
 
 function valueText(value: unknown): string {
@@ -29,7 +27,7 @@ export function createDefinition(ctx: Context): ToolDefinition {
       properties: {
         code: {
           type: 'string',
-          description: 'Complete Python script. Include PEP 723 inline metadata when it imports third-party packages.',
+          description: 'Complete Python script.',
         },
         timeoutMs: {
           type: 'number',

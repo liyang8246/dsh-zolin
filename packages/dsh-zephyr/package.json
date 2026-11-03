@@ -6,7 +6,6 @@
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-zephyr" },
   "exports": {
     "./uv-run": "./lib/uv-run.js",
-    "./restrict": "./lib/restrict.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg",
     "./cordis.patch.yml": "./cordis.patch.yml",
