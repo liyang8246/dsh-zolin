@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "CodeTime",
+    "description": "在设置里填写 codetime.dev 的上报 token，把本机 Harness 的轮次、工具、模型与 token 用量自动上报。"
+  }
+}
