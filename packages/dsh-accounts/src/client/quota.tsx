@@ -6,9 +6,7 @@ import { leftOf, levelOf, measuredWindows, resetTime } from './data.js'
 
 export function createQuotaComponents(React: typeof import('react'), t: (path: string) => string) {
   function Quota({ quota }: QuotaProps): ReactElement {
-    const windows = quota?.status === 'ok'
-      ? measuredWindows(quota.windows)
-      : []
+    const windows = measuredWindows(quota?.windows ?? [])
     return (
       <div className={windows.length ? undefined : 'zph-quota-unavailable'}>
         {windows.length
@@ -38,7 +36,7 @@ export function createQuotaComponents(React: typeof import('react'), t: (path: s
               </div>
             )
           : <p className="zph-muted">{t(quota ? 'unavailable' : 'notFetched')}</p>}
-        {quota?.status === 'ok' && quota.windows.filter(window => window.period === 'other').map((window, index) => (
+        {quota?.windows.filter(window => window.period === 'other').map((window, index) => (
           <div className="zph-muted" key={index}>{`${window.label || t('other')}: ${window.usedPercent?.toFixed(1) ?? '—'}% ${t('used')}`}</div>
         ))}
         {quota?.reason && (

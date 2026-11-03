@@ -98,10 +98,15 @@ export class ModelAccountsService {
       }
       catch (error) {
         if (!this.controller.signal.aborted && (await this.accounts.list()).some(account => account.id === id)) {
+          // A transient provider failure must not erase the last measurement:
+          // the composer bars keep the previous windows and Settings shows the
+          // error next to them, instead of both blinking out until the next
+          // successful cycle.
+          const previous = await this.lastGoodQuota(id)
           this.quotas.set(id, {
             status: 'error',
-            fetchedAt: new Date().toISOString(),
-            windows: [],
+            fetchedAt: previous?.fetchedAt ?? new Date().toISOString(),
+            windows: previous?.windows ?? [],
             reason: safeError(error),
           })
         }
@@ -113,6 +118,24 @@ export class ModelAccountsService {
     }
     finally {
       this.fetching.delete(id)
+    }
+  }
+
+  /**
+   * Read the last measurement a failed refresh should keep showing.
+   * @param id - account whose quota is being reported.
+   * @returns the cached view, else the persisted one, else the bare cached one.
+   */
+  private async lastGoodQuota(id: string): Promise<QuotaView | undefined> {
+    const cached = this.quotas.get(id)
+    if (cached?.windows.length)
+      return cached
+    try {
+      return (await this.accounts.quotas())[id] ?? cached
+    }
+    catch {
+      // An unreadable store costs only the retained windows of this error report.
+      return cached
     }
   }
 

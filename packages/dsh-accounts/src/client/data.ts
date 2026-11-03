@@ -102,9 +102,12 @@ export function measuredWindows(windows: readonly QuotaWindow[]): MeasuredQuotaW
 
 export function activeQuota(snapshot: AccountSnapshot | undefined, channel: ChannelId | undefined): MeasuredQuotaWindow[] {
   const quota = snapshot?.accounts.find(account => account.channel === channel && account.active)?.quota
-  return quota?.status === 'ok'
-    ? measuredWindows(quota.windows)
-    : []
+  // The windows are the only renderable part and a failed refresh keeps the last
+  // measured ones, so the bars survive a transient provider error; gating on
+  // `status === 'ok'` would blank them until the next successful refresh.
+  if (!quota)
+    return []
+  return measuredWindows(quota.windows)
 }
 
 export function leftOf(window: MeasuredQuotaWindow): number {
