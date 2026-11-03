@@ -70,7 +70,8 @@ export function createModelFilter(save?: (text: string) => void): ModelFilter {
       publish()
     },
     setText(next) {
-      const value = next.trim()
+      // The input owns the exact text: trailing spaces must survive typing, they are separators only for parsing.
+      const value = next.replace(/[\r\n\t]+/g, ' ')
       dirty = true
       if (value === text)
         return
@@ -81,7 +82,7 @@ export function createModelFilter(save?: (text: string) => void): ModelFilter {
         clearTimeout(timer)
       timer = setTimeout(() => {
         timer = undefined
-        save?.(value)
+        save?.(value.trim())
       }, saveDelay)
     },
     keywords: () => parsed,
@@ -152,7 +153,12 @@ export function installModelFilter(ctx: Context, filter: ModelFilter): void {
     const directory = original.call(models, sessionId)
     if (!patched.has(directory)) {
       patched.add(directory)
-      filterDirectory(directory, filter)
+      try {
+        filterDirectory(directory, filter)
+      }
+      catch {
+        // A directory this Host's fields do not allow wrapping keeps its full model list; filtering is advisory.
+      }
     }
     return directory
   }
@@ -169,11 +175,15 @@ function filterDirectory(directory: ModelDirectory, filter: ModelFilter): void {
     const snapshot = source.getSnapshot()
     const key = filter.getSnapshot()
     if (cache === undefined || cache.snapshot !== snapshot || cache.key !== key) {
-      cache = {
-        snapshot,
-        key,
-        value: filterModels(snapshot, filter.keywords()),
+      let value: ModelDirectoryState
+      try {
+        value = filterModels(snapshot, filter.keywords())
       }
+      catch {
+        // Never let a catalog the filter cannot read take the model seat down with it.
+        value = snapshot
+      }
+      cache = { snapshot, key, value }
     }
     return cache.value
   }
