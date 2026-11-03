@@ -1,6 +1,5 @@
 // @env browser
 import type { Context } from '@deepseek-ai/cordis'
-import type { ModelDirectory, ModelDirectoryState } from '@deepseek-ai/dsh-client-ui-model-selection/client'
 
 /** Typing must not write the credential record per keystroke. */
 const saveDelay = 400
@@ -100,96 +99,78 @@ function matches(name: string, keywords: readonly string[]): boolean {
   return keywords.some(keyword => lower.includes(keyword))
 }
 
+/** One Host-generation catalog snapshot as the filter reads and rewrites it. */
+interface CatalogState {
+  value: { groups: readonly CatalogGroup[] } | null
+  status: string
+  error: string | null
+}
+
+/** The catalog store's readable face. */
+interface CatalogStore {
+  getSnapshot: () => CatalogState
+  subscribe: (listener: () => void) => () => void
+  set: (next: CatalogState) => void
+}
+
 /**
  * Keep only models whose name contains one of the keywords.
- * @param state - the session's model directory snapshot.
+ * @param state - the shared catalog snapshot.
  * @param keywords - lowercase keywords; empty keeps everything.
- * @returns the snapshot with filtered provider groups; the selected model stays visible so the composer trigger keeps naming the model in use.
+ * @returns the snapshot with filtered provider groups.
  */
-export function filterModels(state: ModelDirectoryState, keywords: readonly string[]): ModelDirectoryState {
-  if (!keywords.length)
+export function filterCatalog(state: CatalogState, keywords: readonly string[]): CatalogState {
+  if (!keywords.length || state.value === null)
     return state
-  const groups = state.groups.map(group => ({
-    ...group,
-    models: group.models.filter((model: CatalogModel) => matches(model.name, keywords)),
-  }))
-  const { current } = state
-  if (current !== null) {
-    const source = state.groups.find((group: CatalogGroup) => group.id === current.provider)
-    const model = source?.models.find((item: CatalogModel) => item.id === current.model)
-    if (source !== undefined && model !== undefined) {
-      const target = groups.find((group: CatalogGroup) => group.id === source.id)
-      if (target === undefined) {
-        groups.push({
-          ...source,
-          models: [model],
-        })
-      }
-      else if (!target.models.some((item: CatalogModel) => item.id === model.id)) {
-        target.models = [...target.models, model]
-      }
-    }
-  }
+  const groups = state.value.groups
+    .map(group => ({
+      ...group,
+      models: group.models.filter((model: CatalogModel) => matches(model.name, keywords)),
+    }))
+    .filter((group: CatalogGroup) => group.models.length > 0)
   return {
     ...state,
-    groups: groups.filter((group: CatalogGroup) => group.models.length > 0),
+    value: { ...state.value, groups },
   }
 }
 
 /**
- * Filter every session model directory the composer seat and /model popup share.
- * Both entries read the directory's store, so the filter sits on the store
- * instead of on either surface.
+ * Filter the one Host-generation model catalog that every session directory copies,
+ * so the composer seat and the /model popup share the filtered list.
+ *
+ * The resolver's own `directoryFor` is NOT wrapped: any method reached through
+ * `ctx.get` becomes callable only under this plugin's inject set, where the
+ * resolver's `this.ctx.remote.session` read is illegal and takes the composer
+ * seat down with it.
  * @param ctx - client root context.
  * @param filter - the page-owned keyword filter.
  */
 export function installModelFilter(ctx: Context, filter: ModelFilter): void {
-  const models = ctx.get('modelDirectories')
-  if (models === undefined)
+  const models = ctx.get('modelDirectories') as { catalog?: { store?: CatalogStore } } | undefined
+  const catalog = models?.catalog
+  const source = catalog?.store
+  if (catalog === undefined || source === undefined)
     return
-  const original = models.directoryFor
-  const patched = new WeakSet<ModelDirectory>()
-  models.directoryFor = (sessionId) => {
-    const directory = original.call(models, sessionId)
-    if (!patched.has(directory)) {
-      patched.add(directory)
-      try {
-        filterDirectory(directory, filter)
-      }
-      catch {
-        // A directory this Host's fields do not allow wrapping keeps its full model list; filtering is advisory.
-      }
-    }
-    return directory
-  }
-  ctx.effect(() => () => {
-    models.directoryFor = original
-  })
-}
-
-function filterDirectory(directory: ModelDirectory, filter: ModelFilter): void {
-  const source = directory.store
-  let cache: { snapshot: ModelDirectoryState, key: string, value: ModelDirectoryState } | undefined
+  let cache: { snapshot: CatalogState, key: string, value: CatalogState } | undefined
   // Reads must return one stable object per state so React's store subscription settles.
-  const read = (): ModelDirectoryState => {
+  const read = (): CatalogState => {
     const snapshot = source.getSnapshot()
     const key = filter.getSnapshot()
     if (cache === undefined || cache.snapshot !== snapshot || cache.key !== key) {
-      let value: ModelDirectoryState
+      let value = snapshot
       try {
-        value = filterModels(snapshot, filter.keywords())
+        value = filterCatalog(snapshot, filter.keywords())
       }
       catch {
-        // Never let a catalog the filter cannot read take the model seat down with it.
-        value = snapshot
+        // A catalog the filter cannot read keeps its full model list; filtering is advisory.
       }
       cache = { snapshot, key, value }
     }
     return cache.value
   }
-  const wrapped = {
+  const wrapped: CatalogStore = {
     getSnapshot: read,
-    subscribe(listener: () => void) {
+    subscribe(listener) {
       const stopSource = source.subscribe(listener)
       const stopFilter = filter.subscribe(listener)
       return () => {
@@ -197,14 +178,9 @@ function filterDirectory(directory: ModelDirectory, filter: ModelFilter): void {
         stopFilter()
       }
     },
-    set: (next: ModelDirectoryState) => {
-      source.set(next)
-    },
-    update: (mutator: (draft: ModelDirectoryState) => void) => {
-      source.update(mutator)
-    },
+    set: next => source.set(next),
   }
-  Object.defineProperty(directory, 'store', {
+  Object.defineProperty(catalog, 'store', {
     configurable: true,
     get: () => wrapped,
   })
