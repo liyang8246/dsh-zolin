@@ -4,18 +4,6 @@ on:
   push:
     tags:
       - v*
-  workflow_dispatch:
-    inputs:
-      package:
-        description: Package to publish
-        required: true
-        default: dsh-codetime
-        type: choice
-        options:
-          - dsh-codetime
-          - dsh-zephyr
-          - dsh-accounts
-          - all
 
 permissions:
   contents: read
@@ -31,7 +19,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Validate release tag
-        if: github.event_name == 'push'
         run: |
           node -e '
             for (const packageName of ["dsh-zephyr", "dsh-accounts", "dsh-codetime"]) {
@@ -49,19 +36,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run ci
       - name: Publish Zephyr
-        if: github.event_name == 'push' || inputs.package == 'all' || inputs.package == 'dsh-zephyr'
         working-directory: packages/dsh-zephyr
         run: npm publish --provenance --access public
       - name: Publish Accounts
-        if: github.event_name == 'push' || inputs.package == 'all' || inputs.package == 'dsh-accounts'
         working-directory: packages/dsh-accounts
         run: npm publish --provenance --access public
       - name: Publish CodeTime
-        if: github.event_name == 'push' || inputs.package == 'all' || inputs.package == 'dsh-codetime'
         working-directory: packages/dsh-codetime
         run: npm publish --provenance --access public
       - uses: softprops/action-gh-release@v2
-        if: github.event_name == 'push'
         with:
           name: '${{ github.ref_name }}'
           generate_release_notes: true
