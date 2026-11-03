@@ -111,6 +111,7 @@ interface CatalogStore {
   getSnapshot: () => CatalogState
   subscribe: (listener: () => void) => () => void
   set: (next: CatalogState) => void
+  update: (mutator: (draft: CatalogState) => void) => void
 }
 
 /**
@@ -168,18 +169,28 @@ export function installModelFilter(ctx: Context, filter: ModelFilter): void {
     }
     return cache.value
   }
-  const wrapped: CatalogStore = {
-    getSnapshot: read,
-    subscribe(listener) {
-      const stopSource = source.subscribe(listener)
-      const stopFilter = filter.subscribe(listener)
-      return () => {
-        stopSource()
-        stopFilter()
-      }
-    },
-    set: next => source.set(next),
+  const subscribe = (listener: () => void): (() => void) => {
+    const stopSource = source.subscribe(listener)
+    const stopFilter = filter.subscribe(listener)
+    return () => {
+      stopSource()
+      stopFilter()
+    }
   }
+  // Every other store member (set/update/…) rides the original store: the owner
+  // writes through this handle, so a hand-picked method list breaks its load path.
+  const wrapped = new Proxy(source, {
+    get(target, property) {
+      if (property === 'getSnapshot')
+        return read
+      if (property === 'subscribe')
+        return subscribe
+      const value = Reflect.get(target, property, target) as unknown
+      return typeof value === 'function'
+        ? value.bind(target)
+        : value
+    },
+  }) as CatalogStore
   Object.defineProperty(catalog, 'store', {
     configurable: true,
     get: () => wrapped,
