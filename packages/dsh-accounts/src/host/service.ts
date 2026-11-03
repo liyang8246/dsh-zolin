@@ -9,7 +9,7 @@ import { refreshOpenCode } from '../providers/opencode.js'
 import { consumeCodexResetCredit, fetchQuota } from '../providers/quota.js'
 import { channelFor, channels } from '../shared/channels.js'
 import { safeError } from '../shared/errors.js'
-import { record, text } from '../shared/validation.js'
+import { filterText, record, text } from '../shared/validation.js'
 import { Accounts } from './accounts.js'
 import { Logins } from './logins.js'
 
@@ -39,6 +39,7 @@ export class ModelAccountsService {
   async snapshot(): Promise<AccountSnapshot> {
     const views = await this.accounts.list()
     const saved = await this.accounts.quotas()
+    const filter = await this.accounts.filter()
     return {
       channels,
       accounts: views.map((account) => {
@@ -48,6 +49,7 @@ export class ModelAccountsService {
           : account
       }),
       catalog: catalogMetadata,
+      filter,
     }
   }
 
@@ -161,6 +163,12 @@ export class ModelAccountsService {
         if (origin !== 'ui')
           throw new Error('Resetting quota is user-only; open Settings → Model Accounts')
         await this.resetCredit(text(args.id, 'account id'), signal)
+        break
+      }
+      case 'set_filter': {
+        if (origin !== 'ui')
+          throw new Error('The model filter is user-only; open Settings → Model Accounts')
+        await this.accounts.saveFilter(filterText(args.filter))
         break
       }
       case 'refresh_quota': {

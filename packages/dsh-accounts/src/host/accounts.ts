@@ -119,6 +119,11 @@ export function readState(payload: unknown): AccountState {
     accounts,
     active: { ...active } as AccountState['active'],
     quotas: readQuotas(state.quotas),
+    ...typeof state.filter === 'string' && state.filter.trim()
+      ? {
+          filter: state.filter.trim(),
+        }
+      : {},
   }
 }
 
@@ -253,6 +258,19 @@ export class Accounts {
 
   async quotas(): Promise<Record<string, QuotaView>> {
     return (await this.read()).quotas ?? {}
+  }
+
+  async filter(): Promise<string> {
+    return (await this.read()).filter ?? ''
+  }
+
+  async saveFilter(filter: string): Promise<void> {
+    await this.change((state) => {
+      if (filter)
+        state.filter = filter
+      else
+        delete state.filter
+    })
   }
 
   async saveQuota(id: string, quota: QuotaView | undefined): Promise<void> {

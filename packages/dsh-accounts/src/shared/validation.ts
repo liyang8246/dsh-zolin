@@ -14,6 +14,15 @@ export function record(value: unknown, label = 'request'): Record<string, unknow
   return value as Record<string, unknown>
 }
 
+/** Model filter text; empty clears the filter, so `text()` cannot validate it. */
+export function filterText(value: unknown): string {
+  if (typeof value !== 'string' || value.length > 1024
+    || [...value].some(character => character.charCodeAt(0) < 32 || character === '\u007F')) {
+    throw new Error('Invalid model filter')
+  }
+  return value.trim()
+}
+
 export function validateTokens(value: unknown): OAuthTokens {
   const tokens = record(value, 'OAuth tokens')
   const access = text(tokens.access, 'access token', 32768)

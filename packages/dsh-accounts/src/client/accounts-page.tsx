@@ -2,6 +2,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type { ComponentType, ReactElement } from 'react'
 import type { ChannelId, LoginView } from '../shared/types.js'
+import type { ModelFilter } from './model-filter.js'
 import type { AccountStore, ClientRequest, QuotaProps } from './types.js'
 import { call } from './api.js'
 import { css } from './constants.js'
@@ -13,6 +14,7 @@ export function createAccountsPage(
   store: AccountStore,
   t: (path: string) => string,
   Quota: ComponentType<QuotaProps>,
+  filter: ModelFilter,
 ): () => ReactElement {
   const errorMessage = (error: unknown): string => error instanceof Error
     ? error.message
@@ -21,6 +23,7 @@ export function createAccountsPage(
   return function AccountsPage(): ReactElement {
     React.useSyncExternalStore(fn => ctx.locale.subscribe(fn), () => ctx.locale.getSnapshot())
     const data = React.useSyncExternalStore(store.subscribe, store.getSnapshot)
+    const filterText = React.useSyncExternalStore(filter.subscribe, filter.getSnapshot)
     const [busy, setBusy] = React.useState(false)
     const [error, setError] = React.useState('')
     const [form, setForm] = React.useState<ChannelId | null>(null)
@@ -200,9 +203,20 @@ export function createAccountsPage(
     return (
       <section className="zph-accounts" aria-label={t('title')} aria-busy={busy}>
         <style>{css}</style>
-        <div className="zph-row zph-between">
-          <h2>{t('title')}</h2>
-          {button(t('refreshAll'), { action: 'refresh_quota' })}
+        <h2>{t('title')}</h2>
+        <div className="zph-filter">
+          <label>
+            <span>{t('modelFilter')}</span>
+            <input
+              type="text"
+              value={filterText}
+              placeholder={t('modelFilterPlaceholder')}
+              autoComplete="off"
+              spellCheck={false}
+              onChange={event => filter.setText(event.currentTarget.value)}
+            />
+          </label>
+          <p className="zph-muted">{t('modelFilterHint')}</p>
         </div>
         {error && <p role="alert" className="zph-error">{error}</p>}
         {!data

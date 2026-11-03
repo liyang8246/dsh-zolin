@@ -3,7 +3,9 @@ import type { ChannelId } from '../shared/types.js'
 export const en = {
   title: 'Model Accounts',
   refresh: 'Refresh quota',
-  refreshAll: 'Refresh all quotas',
+  modelFilter: 'Model name filter',
+  modelFilterPlaceholder: 'e.g. deepseek gpt minimax',
+  modelFilterHint: 'Space-separated keywords, case-insensitive. The chat model picker only offers models whose name contains one of them; empty offers every model.',
   add: 'Add account',
   label: 'Account label',
   key: 'API key',
@@ -34,7 +36,9 @@ export const en = {
 export const zh: Record<keyof typeof en, string> = {
   title: '模型账号',
   refresh: '刷新额度',
-  refreshAll: '刷新全部额度',
+  modelFilter: '模型筛选',
+  modelFilterPlaceholder: '例如 deepseek gpt minimax',
+  modelFilterHint: '用空格分隔关键词，不区分大小写。聊天框的模型选择只列出名称含任一关键词的模型；留空列出全部。',
   add: '添加账号',
   label: '账号名称',
   key: 'API Key',
@@ -82,6 +86,7 @@ export const css = `
 .zph-accounts .zph-quota{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.zph-accounts .zph-window{padding:8px 10px;border-radius:8px;background:var(--dsw-alias-bg-layer-2);font-size:11px;overflow-wrap:anywhere}.zph-accounts .zph-window-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .zph-accounts .zph-track{margin:6px 0 0;width:100%}.zph-accounts .zph-error{color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}.zph-accounts .zph-quota-unavailable{padding-left:5px}.zph-accounts .zph-quota-unavailable > p{display:inline}.zph-accounts .zph-quota-unavailable > p + p{margin-left:8px}
 .zph-accounts .zph-add{padding:12px 16px;border-top:1px solid var(--dsw-alias-border-l1)}.zph-accounts .zph-form{display:flex;flex-direction:column;gap:10px;margin-top:10px}.zph-accounts .zph-form label{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-grow{flex:1 1 180px;min-width:0}.zph-accounts .zph-align-end{align-items:flex-end}
+.zph-accounts .zph-filter{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-filter label{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-filter input{width:100%}
 .zph-accounts .zph-switch{display:flex;align-items:center;cursor:pointer}.zph-accounts .zph-switch input{appearance:none;-webkit-appearance:none;position:relative;width:36px;height:20px;min-height:0;padding:0;border:0;border-radius:10px;background:var(--dsw-alias-bg-layer-2);cursor:pointer;transition:background .15s}
 .zph-accounts .zph-switch input::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--dsw-alias-label-secondary);transition:transform .15s,background .15s}
 .zph-accounts .zph-switch input:checked{background:var(--dsw-alias-label-primary)}.zph-accounts .zph-switch input:checked::after{transform:translateX(16px);background:var(--dsw-alias-bg-base)}.zph-accounts .zph-switch input:disabled{opacity:.5;cursor:default}

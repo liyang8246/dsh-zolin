@@ -38,6 +38,8 @@ export interface AccountState {
   active: Partial<Record<ChannelId, string>>
   /** Last known quota per account id, so a restart shows numbers immediately. */
   quotas?: Record<string, QuotaView>
+  /** Composer model-name filter keywords, shared by every session. */
+  filter?: string
 }
 
 export interface QuotaWindow {
@@ -109,5 +111,7 @@ export interface AccountSnapshot {
   channels: readonly Channel[]
   accounts: AccountView[]
   catalog: { source: string, generatedAt: string, sha256: string }
+  /** Saved model-name filter; empty offers every model. Absent from a Host that predates it. */
+  filter?: string
   login?: LoginView
 }

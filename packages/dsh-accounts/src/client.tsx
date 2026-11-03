@@ -11,6 +11,7 @@ import { createAccountsPage } from './client/accounts-page.js'
 import { call } from './client/api.js'
 import { createComposerQuota } from './client/composer-quota.js'
 import { en, zh } from './client/constants.js'
+import { createModelFilter, installModelFilter } from './client/model-filter.js'
 import { createQuotaComponents } from './client/quota.js'
 import { createAccountStore } from './client/store.js'
 
@@ -34,7 +35,14 @@ loader.load({
         ctx.effect(() => () => store.dispose())
         const { Quota, QuotaBars } = createQuotaComponents(React, t)
         const ComposerQuota = createComposerQuota(React, ctx, store, QuotaBars)
-        const AccountsPage = createAccountsPage(React, ctx, store, t, Quota)
+        const filter = createModelFilter((text) => {
+          void call({ action: 'set_filter', filter: text }).catch(() => {})
+        })
+        ctx.effect(() => () => filter.dispose())
+        installModelFilter(ctx, filter)
+        // Hydrate the saved filter without waiting for Settings to be opened.
+        void store.reload().then(snapshot => filter.hydrate(snapshot.filter ?? '')).catch(() => {})
+        const AccountsPage = createAccountsPage(React, ctx, store, t, Quota, filter)
 
         ctx.slots.inject('settings.section', () => ctx.slots.register({
           name: 'settings.section',

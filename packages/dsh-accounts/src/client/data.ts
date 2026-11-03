@@ -64,6 +64,7 @@ function isSnapshot(value: unknown): value is AccountSnapshot {
     && Array.isArray(value.accounts) && value.accounts.every(isAccount)
     && isObject(value.catalog) && typeof value.catalog.source === 'string'
     && typeof value.catalog.generatedAt === 'string' && typeof value.catalog.sha256 === 'string'
+    && optionalString(value.filter)
     && (value.login === undefined || isLogin(value.login))
 }
 
