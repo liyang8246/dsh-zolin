@@ -21,7 +21,7 @@ jobs:
       - name: Validate release tag
         run: |
           node -e '
-            for (const packageName of ["dsh-zephyr", "dsh-accounts"]) {
+            for (const packageName of ["dsh-zephyr", "dsh-accounts", "dsh-codetime"]) {
               const { name, version } = require(`./packages/${packageName}/package.json`)
               if (name !== `@liyang8246/${packageName}` || `v${version}` !== process.env.GITHUB_REF_NAME) process.exit(1)
             }
@@ -40,6 +40,9 @@ jobs:
         run: npm publish --provenance --access public
       - name: Publish Accounts
         working-directory: packages/dsh-accounts
+        run: npm publish --provenance --access public
+      - name: Publish CodeTime
+        working-directory: packages/dsh-codetime
         run: npm publish --provenance --access public
       - uses: softprops/action-gh-release@v2
         with:
