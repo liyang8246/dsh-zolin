@@ -1,8 +1,30 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type { GenerateOptions, LlmAdapter, LlmResolvedModelInfo } from '@deepseek-ai/dsh-llm'
+import type { GenerateOptions, LlmAdapter, LlmResolvedModelInfo, ResolvedNormalRetryPolicy } from '@deepseek-ai/dsh-llm'
 import type { CatalogModel, Channel, ChannelId, ModelCatalog, StoredAccount } from '../shared/types.js'
 import { channelFor } from '../shared/channels.js'
 import { streamPrepared } from './stream.js'
+
+// Provider-owned retry policy executed by @deepseek-ai/dsh-llm-retry at the
+// agent loop's failed-step boundary. The stock defaults omit PROVIDER_ERROR —
+// the code this transport mints for transport failures such as
+// "Connection error." — so a flaky link ends the turn on the first attempt.
+// TIMEOUT covers this transport's own idle-timeout abort. Written out instead
+// of resolveRetryPolicy() so the plugin keeps importing dsh-llm types only.
+const retryPolicy: ResolvedNormalRetryPolicy = Object.freeze({
+  mode: 'normal',
+  maxRetries: 8,
+  retryableCodes: Object.freeze([
+    'EMPTY_RESPONSE',
+    'RATE_LIMIT',
+    'SERVER',
+    'TIMEOUT',
+    'TRANSPORT',
+    'PROVIDER_ERROR',
+  ]),
+  initialDelayMs: 1000,
+  maxDelayMs: 10000,
+  jitterRatio: 0.2,
+})
 
 function channelOf(provider: string): Channel {
   return channelFor(provider.startsWith('zephyr-')
@@ -49,7 +71,7 @@ export function createTransport(ctx: Context, resolveAccount: (channel: ChannelI
   }
   const adapter: LlmAdapter = {
     providerInfo(provider) { return { id: provider, name: channelOf(provider).name } },
-    providerRetryPolicy() { return undefined },
+    providerRetryPolicy() { return retryPolicy },
     imageRequestPricing() { return undefined },
     imageRequestTarget(_provider, _model, image) { return { width: image.width, height: image.height, maxBytes: image.bytes } },
     async listModels(provider) {
