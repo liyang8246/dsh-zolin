@@ -2,7 +2,7 @@
   "name": "@liyang8246/dsh-accounts",
   "type": "module",
   "version": "0.1.16",
-  "description": "Independent multi-account Codex, OpenCode Go and CommandCode Go plugin for DeepSeek Harness.",
+  "description": "Independent multi-account Codex, OpenCode Go, CommandCode Go and WorkBuddy plugin for DeepSeek Harness.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-accounts" },
   "exports": {
     ".": "./lib/index.js",
@@ -15,7 +15,8 @@
   "files": ["cordis.patch.yml", "icon.svg", "lib/", "locale/*.json"],
   "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
   "scripts": {
-    "build": "node scripts/update-models.ts --check && tsdown && node scripts/build-client.ts",
+    "build": "node scripts/update-models.ts --check && tsdown && node scripts/build-client.ts && tsdown scripts/self-check.ts --format esm --target node22 --out-dir .self-check --clean && node .self-check/self-check.js",
+    "self-check": "tsdown scripts/self-check.ts --format esm --target node22 --out-dir .self-check --clean && node .self-check/self-check.js",
     "models:update": "node scripts/update-models.ts",
     "typecheck": "tsc --noEmit"
   },

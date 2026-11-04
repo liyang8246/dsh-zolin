@@ -5,10 +5,24 @@ import type { CatalogModel, ChannelId, StoredAccount } from '../shared/types.js'
 import { streamSimple as streamCodex } from '@earendil-works/pi-ai/api/openai-codex-responses'
 import { streamSimple as streamCompletions } from '@earendil-works/pi-ai/api/openai-completions'
 import { streamCommandCode } from '../providers/commandcode/stream.js'
+import { workBuddyChatBase, workBuddyChatHeaders } from '../providers/workbuddy.js'
 import { object, toNativeContext, zeroUsage } from './context.js'
 import { convertStream, failure, redact } from './events.js'
 
 const headers = { 'user-agent': 'dsh-zephyr/0.2.0' }
+
+function isWorkBuddy(channel: ChannelId): boolean {
+  return channel === 'workbuddy-cn'
+}
+
+function baseURL(channel: ChannelId): string {
+  if (channel === 'openai-codex')
+    return 'https://chatgpt.com/backend-api'
+  // WorkBuddy's gateway speaks plain chat-completions under its own version prefix.
+  if (isWorkBuddy(channel))
+    return `${workBuddyChatBase}/v2`
+  return 'https://opencode.ai/inference/go/openai/v1'
+}
 
 function nativeModel(channel: ChannelId, model: CatalogModel): Model<Api> {
   return {
@@ -18,9 +32,7 @@ function nativeModel(channel: ChannelId, model: CatalogModel): Model<Api> {
       ? 'openai-codex-responses'
       : 'openai-completions',
     provider: channel,
-    baseUrl: channel === 'openai-codex'
-      ? 'https://chatgpt.com/backend-api'
-      : 'https://opencode.ai/inference/go/openai/v1',
+    baseUrl: baseURL(channel),
     input: model.input,
     contextWindow: model.contextWindow,
     maxTokens: model.maxTokens,
@@ -42,11 +54,21 @@ function nativeModel(channel: ChannelId, model: CatalogModel): Model<Api> {
           ? level
           : null,
     ])),
-    ...(channel === 'opencode-go'
+    ...(isWorkBuddy(channel)
+      // WorkBuddy takes the CLI-shaped OpenAI body: no `store`, no developer role, `max_tokens`.
       ? {
-          compat: { requiresReasoningContentOnAssistantMessages: model.reasoningField === 'reasoning_content' },
+          compat: {
+            maxTokensField: 'max_tokens' as const,
+            requiresReasoningContentOnAssistantMessages: true,
+            supportsDeveloperRole: false,
+            supportsStore: false,
+          },
         }
-      : {}),
+      : model.reasoningField === 'reasoning_content'
+        ? {
+            compat: { requiresReasoningContentOnAssistantMessages: true },
+          }
+        : {}),
   }
 }
 
@@ -105,17 +127,21 @@ export async function* streamPrepared(ctx: Context, options: GenerateOptions, ac
         }
         return response
       },
-      headers: {
-        ...headers,
-        ...(account.channel === 'opencode-go' && options.sessionId
-          ? {
-              'x-opencode-session': String(options.sessionId),
-            }
-          : {}),
-        ...(account.channel === 'opencode-go' && account.credential.kind === 'oauth' && account.credential.tokens.orgId
-          ? { 'x-opencode-org-id': account.credential.tokens.orgId }
-          : {}),
-      },
+      // The gateway gates on this client identity, so it replaces the default headers
+      // rather than adding a second (differently-cased) user-agent beside them.
+      headers: isWorkBuddy(account.channel)
+        ? workBuddyChatHeaders(account)
+        : {
+            ...headers,
+            ...(account.channel === 'opencode-go' && options.sessionId
+              ? {
+                  'x-opencode-session': String(options.sessionId),
+                }
+              : {}),
+            ...(account.channel === 'opencode-go' && account.credential.kind === 'oauth' && account.credential.tokens.orgId
+              ? { 'x-opencode-org-id': account.credential.tokens.orgId }
+              : {}),
+          },
       ...(options.sessionId
         ? { sessionId: `${options.sessionId}:${account.channel}:${account.id}` }
         : {}),

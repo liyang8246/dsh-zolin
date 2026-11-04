@@ -4,3 +4,4 @@ lib/
 .DS_Store
 Thumbs.db
 **/.agents/clonedeps/repos/
+**/.self-check/

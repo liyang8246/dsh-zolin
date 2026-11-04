@@ -1,5 +1,5 @@
-export type ChannelId = 'openai-codex' | 'opencode-go' | 'commandcode-go'
-export type CatalogSource = 'openai' | 'opencode-go' | 'commandcode'
+export type ChannelId = 'openai-codex' | 'opencode-go' | 'commandcode-go' | 'workbuddy-cn'
+export type CatalogSource = 'openai' | 'opencode-go' | 'commandcode' | 'workbuddy-cn'
 
 export interface CatalogModel {
   id: string

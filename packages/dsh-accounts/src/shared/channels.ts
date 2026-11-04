@@ -22,6 +22,13 @@ export const channels: readonly Channel[] = [
     auth: ['api-key'],
     consoleURL: 'https://commandcode.ai/dashboard',
   },
+  {
+    id: 'workbuddy-cn',
+    name: 'WorkBuddy CN',
+    source: 'workbuddy-cn',
+    auth: ['oauth'],
+    consoleURL: 'https://www.codebuddy.cn',
+  },
 ]
 
 export function channelFor(value: unknown): Channel {

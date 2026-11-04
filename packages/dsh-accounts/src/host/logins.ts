@@ -1,11 +1,35 @@
-import type { ChannelId, LoginAttempt, LoginInteraction, LoginNotice, LoginView } from '../shared/types.js'
+import type { ChannelId, LoginAttempt, LoginInteraction, LoginNotice, LoginView, OAuthTokens } from '../shared/types.js'
 // @env node
 import type { Accounts } from './accounts.js'
 import { randomUUID } from 'node:crypto'
 import { loginOpenAI } from '../providers/openai.js'
 import { loginOpenCode } from '../providers/opencode.js'
+import { loginWorkBuddy } from '../providers/workbuddy.js'
 import { channelFor } from '../shared/channels.js'
 import { text } from '../shared/validation.js'
+
+/** Hosts a channel's sign-in page may live on; anything else is refused before the UI sees it. */
+const authorizationHosts: Record<ChannelId, readonly string[]> = {
+  'openai-codex': [
+    'auth.openai.com',
+    'chatgpt.com',
+  ],
+  'opencode-go': [
+    'opencode.ai',
+  ],
+  'commandcode-go': [],
+  'workbuddy-cn': [
+    'www.codebuddy.cn',
+  ],
+}
+
+function loginFor(channel: ChannelId): (interaction: LoginInteraction) => Promise<OAuthTokens> {
+  if (channel === 'openai-codex')
+    return loginOpenAI
+  if (channel === 'opencode-go')
+    return loginOpenCode
+  return loginWorkBuddy
+}
 
 function view(attempt: LoginAttempt): LoginView {
   return {
@@ -109,9 +133,7 @@ export class Logins {
 
   private async run(attempt: LoginAttempt, label: string, interaction: LoginInteraction): Promise<void> {
     try {
-      const login = attempt.channel === 'openai-codex'
-        ? loginOpenAI
-        : loginOpenCode
+      const login = loginFor(attempt.channel)
       const tokens = await login(interaction)
       interaction.signal.throwIfAborted()
       await this.accounts.add(attempt.channel, label, { kind: 'oauth', tokens })
@@ -135,9 +157,7 @@ export class Logins {
     const next: LoginNotice = {}
     if (notice.url) {
       const url = new URL(text(notice.url, 'authorization URL', 8192))
-      const allowed = attempt.channel === 'openai-codex'
-        ? ['auth.openai.com', 'chatgpt.com']
-        : ['opencode.ai']
+      const allowed = authorizationHosts[attempt.channel]
       if (url.protocol !== 'https:' || !allowed.includes(url.hostname) || url.port || url.username || url.password)
         throw new Error('Unexpected OAuth authorization URL')
       next.url = url.href

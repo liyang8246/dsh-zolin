@@ -21,7 +21,8 @@ function isChannelId(value: unknown): value is ChannelId {
 
 function isChannel(value: unknown): value is Channel {
   return isObject(value) && isChannelId(value.id) && typeof value.name === 'string'
-    && (value.source === 'openai' || value.source === 'opencode-go' || value.source === 'commandcode')
+    && (value.source === 'openai' || value.source === 'opencode-go' || value.source === 'commandcode'
+      || value.source === 'workbuddy-cn')
     && Array.isArray(value.auth) && value.auth.every((item: unknown) => item === 'api-key' || item === 'oauth')
     && typeof value.consoleURL === 'string'
 }
@@ -98,6 +99,15 @@ export function measuredWindows(windows: readonly QuotaWindow[]): MeasuredQuotaW
         ]
       : []
   })
+}
+
+/** Every window that has a measurement, including provider pools such as credits. */
+export function allWindows(windows: readonly QuotaWindow[]): MeasuredQuotaWindow[] {
+  return windows.flatMap(window => typeof window.usedPercent === 'number' && Number.isFinite(window.usedPercent)
+    ? [
+        { ...window, usedPercent: window.usedPercent },
+      ]
+    : [])
 }
 
 export function activeQuota(snapshot: AccountSnapshot | undefined, channel: ChannelId | undefined): MeasuredQuotaWindow[] {

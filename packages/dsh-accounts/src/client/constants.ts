@@ -72,6 +72,7 @@ export const authorizationHosts: Record<ChannelId, readonly string[]> = {
   'openai-codex': ['auth.openai.com', 'chatgpt.com'],
   'opencode-go': ['opencode.ai'],
   'commandcode-go': [],
+  'workbuddy-cn': ['www.codebuddy.cn'],
 }
 
 export const css = `

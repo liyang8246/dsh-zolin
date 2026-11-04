@@ -8,6 +8,8 @@ import { record, text } from '../src/shared/validation.ts'
 
 export const catalogURL = 'https://models.dev/api.json'
 export const sources = ['opencode-go', 'commandcode'] as const
+/** Sources with no models.dev entry: their rosters are read live from the provider. */
+const liveSources = ['openai', 'workbuddy-cn'] as const
 const target = new URL('../src/providers/catalog.generated.ts', import.meta.url)
 const digest = (value: unknown): string => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 
@@ -73,7 +75,7 @@ export function normalizeCatalog(input: unknown): Pick<ModelCatalog, typeof sour
 
 export async function main(args = process.argv.slice(2)): Promise<void> {
   if (args.includes('--check')) {
-    if (catalogMetadata.source !== catalogURL || digest(modelCatalog) !== catalogMetadata.sha256 || modelCatalog.openai.length || !sources.every(source => modelCatalog[source].length))
+    if (catalogMetadata.source !== catalogURL || digest(modelCatalog) !== catalogMetadata.sha256 || liveSources.some(source => modelCatalog[source].length) || !sources.every(source => modelCatalog[source].length))
       throw new Error('Invalid model snapshot; run pnpm models:update')
     console.log('Using checked-in models.dev snapshot (pnpm models:update to refresh)')
     return
@@ -85,7 +87,8 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
   if (!response.ok)
     throw new Error(`models.dev returned HTTP ${response.status}; previous snapshot was not changed`)
   const catalog: ModelCatalog = {
-    openai: [],
+    'openai': [],
+    'workbuddy-cn': [],
     ...normalizeCatalog(await response.json()),
   }
   const metadata = {

@@ -1,5 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type { AccountSnapshot, CatalogModel, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
+import type { AccountSnapshot, CatalogModel, ChannelId, ModelCatalog, QuotaView, StoredAccount } from '../shared/types.js'
 import { setTimeout as delay } from 'node:timers/promises'
 import { catalogMetadata, modelCatalog } from '../providers/catalog.generated.js'
 import { fetchCodexModels } from '../providers/codex-models.js'
@@ -7,11 +7,16 @@ import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
 import { refreshOpenCode } from '../providers/opencode.js'
 import { consumeCodexResetCredit, fetchQuota } from '../providers/quota.js'
+import { fetchWorkBuddyModels, fetchWorkBuddyQuota, refreshWorkBuddy } from '../providers/workbuddy.js'
 import { channelFor, channels } from '../shared/channels.js'
 import { safeError } from '../shared/errors.js'
 import { filterText, record, text } from '../shared/validation.js'
 import { Accounts } from './accounts.js'
 import { Logins } from './logins.js'
+
+function isWorkBuddy(channel: ChannelId): boolean {
+  return channel === 'workbuddy-cn'
+}
 
 export class ModelAccountsService {
   readonly accounts: Accounts
@@ -21,7 +26,8 @@ export class ModelAccountsService {
   private readonly controller = new AbortController()
   private readonly quotas = new Map<string, QuotaView>()
   private readonly fetching = new Map<string, Promise<void>>()
-  private codex?: { account: string, at: number, models: CatalogModel[] }
+  /** Live model lists keyed by channel, so a repeat call within ten minutes costs no request. */
+  private readonly live = new Map<ChannelId, { account: string, at: number, models: CatalogModel[] }>()
   private timer?: ReturnType<typeof setInterval>
   private cycling = false
 
@@ -31,6 +37,8 @@ export class ModelAccountsService {
         return refreshOpenAI(tokens, signal)
       if (channel === 'opencode-go')
         return refreshOpenCode(tokens, signal)
+      if (isWorkBuddy(channel))
+        return refreshWorkBuddy(tokens, signal)
       throw new Error('OAuth is not supported by this channel')
     })
     this.logins = new Logins(this.accounts, () => this.onChange?.())
@@ -59,22 +67,28 @@ export class ModelAccountsService {
   }
 
   async refreshCatalog(channel: ChannelId, signal?: AbortSignal): Promise<void> {
-    if (channel !== 'openai-codex' || this.controller.signal.aborted)
+    const fetchModels = channel === 'openai-codex'
+      ? fetchCodexModels
+      : isWorkBuddy(channel)
+        ? (account: StoredAccount, manual?: AbortSignal) => fetchWorkBuddyModels(account, manual)
+        : undefined
+    if (!fetchModels || this.controller.signal.aborted)
       return
     const account = await this.accounts.resolve(channel, signal)
-    if (this.codex?.account === account.id && Date.now() - this.codex.at < 10 * 60_000) {
-      this.catalog.openai = this.codex.models
+    const cached = this.live.get(channel)
+    if (cached?.account === account.id && Date.now() - cached.at < 10 * 60_000) {
+      this.catalog[channelFor(channel).source] = cached.models
       return
     }
-    const models = await fetchCodexModels(account, signal)
+    const models = await fetchModels(account, signal)
     if (this.controller.signal.aborted)
       return
-    this.codex = {
+    this.live.set(channel, {
       account: account.id,
       at: Date.now(),
       models,
-    }
-    this.catalog.openai = models
+    })
+    this.catalog[channelFor(channel).source] = models
   }
 
   private async refreshQuota(id: string, signal?: AbortSignal): Promise<void> {
@@ -89,7 +103,9 @@ export class ModelAccountsService {
         const account = await this.accounts.resolve(view.channel, signal, id)
         const quota = account.channel === 'commandcode-go'
           ? await fetchCommandCodeQuota(account, signal)
-          : await fetchQuota(account, signal)
+          : isWorkBuddy(account.channel)
+            ? await fetchWorkBuddyQuota(account, signal)
+            : await fetchQuota(account, signal)
         if (!this.controller.signal.aborted && (await this.accounts.list()).some(account => account.id === id)) {
           this.quotas.set(id, quota)
           // Persist successful answers only; transient errors must not replace the restart cache.
