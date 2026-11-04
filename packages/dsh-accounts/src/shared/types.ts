@@ -62,6 +62,23 @@ export interface QuotaView {
   resetCredits?: number
 }
 
+/** WorkBuddy's daily check-in, as the upstream states it. */
+export interface CheckinView {
+  active: boolean
+  checkedIn: boolean
+  streakDays: number
+  dailyCredit: number
+  /** This week's seven days, Monday first. */
+  weekProgress?: boolean[]
+}
+
+/** A promotional credit grant the account may still claim. */
+export interface BenefitView {
+  kind: 'compensation' | 'gift'
+  creditNum: number
+  endTime?: string
+}
+
 export interface AccountView {
   id: string
   channel: ChannelId
@@ -72,6 +89,8 @@ export interface AccountView {
   email?: string
   orgName?: string
   quota?: QuotaView
+  checkin?: CheckinView
+  benefits?: BenefitView[]
 }
 
 export interface LoginNotice {

@@ -31,6 +31,13 @@ export const en = {
   week: 'Week',
   month: 'Month',
   other: 'Other window',
+  checkin: 'Check in',
+  checkedIn: 'checked in today',
+  notCheckedIn: 'not checked in',
+  streak: 'streak',
+  days: 'd',
+  weekProgress: 'this week',
+  claimBenefits: 'Claim rewards',
 }
 
 export const zh: Record<keyof typeof en, string> = {
@@ -64,6 +71,13 @@ export const zh: Record<keyof typeof en, string> = {
   week: '周',
   month: '月',
   other: '其他窗口',
+  checkin: '签到',
+  checkedIn: '今日已签',
+  notCheckedIn: '今日未签',
+  streak: '连签',
+  days: '天',
+  weekProgress: '本周',
+  claimBenefits: '领取权益',
 }
 
 export const quotaPeriods = ['5h', 'week', 'month'] as const
@@ -97,6 +111,6 @@ export const css = `
 .zph-track b{display:block;height:100%;border-radius:2px;background:var(--dsw-alias-brand-primary)}
 .zph-track[data-level=high] b{background:var(--dsw-alias-state-warn-primary)}
 .zph-track[data-level=full] b{background:var(--dsw-alias-state-error-primary)}
-.zph-accounts .zph-login{padding:8px 10px;border-radius:8px;border:1px solid var(--dsw-alias-border-l2);display:flex;align-items:center;gap:8px;flex-wrap:wrap;align-self:stretch}.zph-accounts code{font-family:monospace;user-select:all}.zph-accounts .zph-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.zph-accounts .zph-login{padding:10px 12px;border-radius:8px;border:1px solid var(--dsw-alias-border-l2);display:flex;flex-direction:column;gap:8px;align-self:stretch}.zph-accounts .zph-login .zph-row{gap:12px 14px}.zph-accounts .zph-login button.zph-link{padding:2px 0}.zph-accounts code{font-family:monospace;user-select:all}.zph-accounts .zph-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
 @media(max-width:520px){.zph-accounts .zph-actions{margin-left:0}}
 `

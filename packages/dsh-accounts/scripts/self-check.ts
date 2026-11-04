@@ -1,6 +1,6 @@
 // Asserts the two WorkBuddy answer parsers. Run with `node scripts/self-check.ts`.
 import assert from 'node:assert/strict'
-import { parseWorkBuddyModels, parseWorkBuddyQuota } from '../src/providers/workbuddy.ts'
+import { parseWorkBuddyBenefit, parseWorkBuddyCheckin, parseWorkBuddyModels, parseWorkBuddyQuota } from '../src/providers/workbuddy.ts'
 
 const catalog = {
   code: 0,
@@ -66,6 +66,61 @@ assert.throws(() => parseWorkBuddyModels({
   code: 0,
   data: { models: null },
 }), /no usable models|Invalid WorkBuddy model list/)
+
+const checkin = parseWorkBuddyCheckin({
+  code: 0,
+  data: {
+    active: true,
+    today_checked_in: true,
+    streak_days: 7,
+    daily_credit: 100,
+    week_progress: [
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ],
+  },
+})
+assert.deepEqual(checkin, {
+  active: true,
+  checkedIn: true,
+  streakDays: 7,
+  dailyCredit: 100,
+  weekProgress: [
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    false,
+  ],
+})
+assert.equal(parseWorkBuddyCheckin({ code: 0, data: {} }).active, false, 'a missing body is not an active campaign')
+
+assert.deepEqual(parseWorkBuddyBenefit({
+  code: 0,
+  data: {
+    active: true,
+    claimed: false,
+    credit_num: 1500,
+    end_time: '2026-11-30 23:59:59',
+  },
+}, 'gift'), [
+  { kind: 'gift', creditNum: 1500, endTime: '2026-11-30 23:59:59' },
+])
+assert.deepEqual(parseWorkBuddyBenefit({
+  code: 0,
+  data: { active: false, claimed: false, credit_num: 500 },
+}, 'compensation'), [], 'an ended campaign is not offered')
+assert.deepEqual(parseWorkBuddyBenefit({
+  code: 0,
+  data: { active: true, claimed: true, credit_num: 1500 },
+}, 'gift'), [], 'a claimed grant is not offered twice')
 
 function credits(accounts: unknown[]) {
   return {

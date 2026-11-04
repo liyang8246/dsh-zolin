@@ -175,14 +175,17 @@ export function createAccountsPage(
       return (
         <div className="zph-login" role="status">
           <strong>{t('pending')}</strong>
-          {url && <a href={url} target="_blank" rel="noreferrer noopener">{t('open')}</a>}
-          {value.notice?.code && (
-            <span>
-              {`${t('code')}: `}
-              <code>{value.notice.code}</code>
-            </span>
-          )}
-          {value.prompt && !paste && <button type="button" className="zph-link" onClick={() => setPaste(true)}>{t('paste')}</button>}
+          <div className="zph-row">
+            {url && <a href={url} target="_blank" rel="noreferrer noopener">{t('open')}</a>}
+            {value.notice?.code && (
+              <span>
+                {`${t('code')}: `}
+                <code>{value.notice.code}</code>
+              </span>
+            )}
+            {value.prompt && !paste && <button type="button" className="zph-link" onClick={() => setPaste(true)}>{t('paste')}</button>}
+            {button(t('cancel'), { action: 'login_cancel', attemptId: value.id })}
+          </div>
           {value.prompt && paste && (
             <form
               className="zph-row"
@@ -195,7 +198,6 @@ export function createAccountsPage(
               <button type="submit" disabled={busy || !answer.trim()}>{t('reply')}</button>
             </form>
           )}
-          {button(t('cancel'), { action: 'login_cancel', attemptId: value.id })}
         </div>
       )
     }
@@ -292,6 +294,21 @@ export function createAccountsPage(
                         </div>
                       )}
                       <Quota quota={account.quota} />
+                      {account.checkin?.active && (
+                        <div className="zph-row">
+                          <span className="zph-muted">
+                            {`${t('checkin')} · ${account.checkin.checkedIn
+                              ? t('checkedIn')
+                              : t('notCheckedIn')}`}
+                            {` · +${account.checkin.dailyCredit} · ${t('streak')} ${account.checkin.streakDays}${t('days')}`}
+                            {account.checkin.weekProgress
+                              ? ` · ${t('weekProgress')} ${account.checkin.weekProgress.filter(Boolean).length}/7`
+                              : ''}
+                          </span>
+                          {!account.checkin.checkedIn && button(t('checkin'), { action: 'checkin', id: account.id })}
+                        </div>
+                      )}
+                      {Boolean(account.benefits?.length) && button(`${t('claimBenefits')} (${account.benefits?.length})`, { action: 'claim_benefits', id: account.id })}
                     </article>
                   ))}
                   {!accounts.length && <p className="zph-account zph-muted">{t('empty')}</p>}

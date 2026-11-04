@@ -1,5 +1,5 @@
 // @env node
-import type { CatalogModel, LoginInteraction, OAuthTokens, QuotaView, QuotaWindow, StoredAccount } from '../shared/types.js'
+import type { BenefitView, CatalogModel, CheckinView, LoginInteraction, OAuthTokens, QuotaView, QuotaWindow, StoredAccount } from '../shared/types.js'
 import { randomUUID } from 'node:crypto'
 import { setTimeout as delay } from 'node:timers/promises'
 import { fetchJSON } from '../shared/http.js'
@@ -397,4 +397,95 @@ export async function fetchWorkBuddyQuota(account: StoredAccount, signal?: Abort
       PackageEndTimeRangeEnd: format(new Date(now.getTime() + 365 * 101 * 24 * 3600 * 1000)),
     }),
   }, signal))
+}
+
+function billingJSON(path: string, account: StoredAccount, signal?: AbortSignal): Promise<unknown> {
+  if (account.credential.kind !== 'oauth')
+    throw new Error('WorkBuddy requires an OAuth account')
+  return fetchJSON(`${LOGIN_BASE}${path}`, {
+    method: 'POST',
+    headers: billingHeaders(account.credential.tokens),
+    body: '{}',
+  }, signal)
+}
+
+export function parseWorkBuddyCheckin(input: unknown): CheckinView {
+  const data = dataOf(input, 'WorkBuddy check-in')
+  const week = Array.isArray(data.week_progress)
+    ? data.week_progress.map(day => day === true)
+    : undefined
+  return {
+    active: data.active === true,
+    checkedIn: data.today_checked_in === true,
+    streakDays: typeof data.streak_days === 'number'
+      ? data.streak_days
+      : 0,
+    dailyCredit: typeof data.daily_credit === 'number'
+      ? data.daily_credit
+      : 0,
+    ...(week
+      ? { weekProgress: week }
+      : {}),
+  }
+}
+
+export async function fetchWorkBuddyCheckin(account: StoredAccount, signal?: AbortSignal): Promise<CheckinView> {
+  return parseWorkBuddyCheckin(await billingJSON('/v2/billing/meter/checkin-activity-status', account, signal))
+}
+
+/** One check-in; returns the credits it granted. */
+export async function claimWorkBuddyCheckin(account: StoredAccount, signal?: AbortSignal): Promise<number> {
+  const data = dataOf(await billingJSON('/v2/billing/meter/daily-checkin', account, signal), 'WorkBuddy check-in')
+  return typeof data.credit === 'number'
+    ? data.credit
+    : 0
+}
+
+/** One claimable benefit, or none when it is inactive, already claimed or malformed. */
+export function parseWorkBuddyBenefit(input: unknown, kind: BenefitView['kind']): BenefitView[] {
+  const data = dataOf(input, `WorkBuddy ${kind}`)
+  if (data.active !== true || data.claimed === true || typeof data.credit_num !== 'number')
+    return []
+  const end = firstText(data, ['end_time'])
+  return [
+    {
+      kind,
+      creditNum: data.credit_num,
+      ...(end
+        ? { endTime: end }
+        : {}),
+    },
+  ]
+}
+
+/** Benefits the account may still claim; an inactive or claimed one is not offered. */
+export async function fetchWorkBuddyBenefits(account: StoredAccount, signal?: AbortSignal): Promise<BenefitView[]> {
+  const read = async (kind: BenefitView['kind'], path: string): Promise<BenefitView[]> => {
+    try {
+      return parseWorkBuddyBenefit(await billingJSON(path, account, signal), kind)
+    }
+    catch {
+      // A benefit probe is advisory; it must never cost the caller its credit view.
+      return []
+    }
+  }
+  return [
+    ...await read('gift', '/billing/meter/check-gift-claimed'),
+    ...await read('compensation', '/billing/meter/compensation-status'),
+  ]
+}
+
+/** Claim every claimable benefit; returns the credits gained. */
+export async function claimWorkBuddyBenefits(account: StoredAccount, signal?: AbortSignal): Promise<number> {
+  let gained = 0
+  for (const benefit of await fetchWorkBuddyBenefits(account, signal)) {
+    const data = dataOf(await billingJSON(benefit.kind === 'gift'
+      ? '/billing/meter/claim-gift'
+      : '/billing/meter/claim-compensation', account, signal), 'WorkBuddy benefit claim')
+    if (typeof data.credit_num === 'number')
+      gained += data.credit_num
+    else if (typeof data.credit === 'number')
+      gained += data.credit
+  }
+  return gained
 }
