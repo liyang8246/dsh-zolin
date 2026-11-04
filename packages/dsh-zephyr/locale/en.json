@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Zephyr Coding Preset",
-    "description": "Standalone Zephyr persona, slim coding tools and sandbox-aware uv_run. Uses the Host's existing model selection."
+    "description": "Standalone Zephyr persona, slim coding tools, sandbox-aware uv_run and a local web_fetch. Uses the Host's existing model selection and web search."
   }
 }

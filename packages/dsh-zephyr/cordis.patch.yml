@@ -93,8 +93,11 @@
           - id: tool-web
             name: '@deepseek-ai/dsh-tool-web'
             config:
-              fetch: true
+              search: true
+              fetch: false
               searchTimeoutMs: 60000
+          - id: zephyr-webfetch
+            name: '@liyang8246/dsh-zephyr/webfetch'
           - id: present
             name: '@deepseek-ai/dsh-tool-present'
 

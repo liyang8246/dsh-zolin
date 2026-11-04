@@ -1,11 +1,16 @@
 {
   "name": "@liyang8246/dsh-zephyr",
   "type": "module",
-  "version": "0.1.14",
-  "description": "Standalone Zephyr coding preset, persona and slim tool set for DeepSeek Harness.",
-  "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-zephyr" },
+  "version": "0.1.15",
+  "description": "Standalone Zephyr coding preset, persona, slim tool set and a local web_fetch for DeepSeek Harness.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liyang8246/dsh-zolin.git",
+    "directory": "packages/dsh-zephyr"
+  },
   "exports": {
     "./uv-run": "./lib/uv-run.js",
+    "./webfetch": "./lib/webfetch.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg",
     "./cordis.patch.yml": "./cordis.patch.yml",
@@ -17,19 +22,31 @@
     "lib/",
     "locale/*.json"
   ],
-  "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
+  "engines": {
+    "node": ">=22.19.0",
+    "dsh": ">=0.2.1-rc.5 <0.3.0"
+  },
   "scripts": {
     "build": "tsdown",
     "typecheck": "tsc --noEmit"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@joplin/turndown-plugin-gfm": "^1.0.68",
+    "playwright-core": "^1.64.1",
+    "turndown": "^7.2.4"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.5",
     "@deepseek-ai/dsh-sandbox-policy": "0.2.1-rc.5",
     "@deepseek-ai/dsh-shell": "0.2.1-rc.5",
+    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.5",
     "@deepseek-ai/dsh-tools": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-working-directory": "0.2.1-rc.5"
-  },
-  "dsh": {
-    "bundle": { "patch": "./cordis.patch.yml" }
+    "@deepseek-ai/dsh-working-directory": "0.2.1-rc.5",
+    "@types/turndown": "^5.0.6"
   }
 }

@@ -1,5 +1,4 @@
 {
   "extends": "../../tsconfig.json",
-  "compilerOptions": { "lib": ["ES2023"] },
   "include": ["src/**/*.ts", "tsdown.config.ts"]
 }
