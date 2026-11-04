@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-accounts",
   "type": "module",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Independent multi-account Codex, OpenCode Go and CommandCode Go plugin for DeepSeek Harness.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-accounts" },
   "exports": {
@@ -33,7 +33,6 @@
     "@deepseek-ai/dsh-client-ui-slots": "0.2.1-rc.5",
     "@deepseek-ai/dsh-credentials": "0.2.1-rc.5",
     "@deepseek-ai/dsh-llm": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-tools": "0.2.1-rc.5",
     "@earendil-works/pi-ai": "1.1.0"
   },
   "dsh": {
