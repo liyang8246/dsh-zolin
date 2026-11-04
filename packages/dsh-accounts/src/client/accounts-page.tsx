@@ -281,7 +281,7 @@ export function createAccountsPage(
                       )}
                       <Quota quota={account.quota} />
                       {account.checkin?.active && (
-                        <div className="zph-row">
+                        <div className="zph-row zph-checkin">
                           <span className="zph-muted">
                             {`${t('checkin')} · ${account.checkin.checkedIn
                               ? t('checkedIn')
