@@ -30,8 +30,7 @@ export function createAccountsPage(
     const [label, setLabel] = React.useState('')
     const [apiKey, setApiKey] = React.useState('')
     const [login, setLogin] = React.useState<LoginView | null>(null)
-    const [answer, setAnswer] = React.useState('')
-    const [paste, setPaste] = React.useState(false)
+    const [copied, setCopied] = React.useState(false)
     const [removing, setRemoving] = React.useState<string | null>(null)
     const [resetting, setResetting] = React.useState<string | null>(null)
     const mounted = React.useRef(true)
@@ -66,8 +65,6 @@ export function createAccountsPage(
         setError(value.error)
       setLogin(null)
       setForm(null)
-      setAnswer('')
-      setPaste(false)
     }, [])
 
     React.useEffect(() => {
@@ -127,19 +124,9 @@ export function createAccountsPage(
           if (request.action === 'login_cancel') {
             setLogin(null)
             setForm(null)
-            setAnswer('')
-            setPaste(false)
           }
           else if (value.status === 'pending') {
             setLogin(value)
-            if (request.action === 'login_start') {
-              setPaste(false)
-              setAnswer('')
-            }
-            if (request.action === 'login_reply') {
-              setAnswer('')
-              setPaste(false)
-            }
           }
           else {
             await finishLogin(value)
@@ -175,29 +162,28 @@ export function createAccountsPage(
       return (
         <div className="zph-login" role="status">
           <strong>{t('pending')}</strong>
-          <div className="zph-row">
-            {url && <a href={url} target="_blank" rel="noreferrer noopener">{t('open')}</a>}
-            {value.notice?.code && (
-              <span>
-                {`${t('code')}: `}
-                <code>{value.notice.code}</code>
-              </span>
-            )}
-            {value.prompt && !paste && <button type="button" className="zph-link" onClick={() => setPaste(true)}>{t('paste')}</button>}
-            {button(t('cancel'), { action: 'login_cancel', attemptId: value.id })}
-          </div>
-          {value.prompt && paste && (
-            <form
-              className="zph-row"
-              onSubmit={(event) => {
-                event.preventDefault()
-                void run({ action: 'login_reply', attemptId: value.id, answer })
+          {url && (
+            <button
+              type="button"
+              onClick={() => {
+                void navigator.clipboard.writeText(url).then(() => {
+                  setCopied(true)
+                  setTimeout(setCopied, 2_000, false)
+                }).catch(() => setError(t('copyFailed')))
               }}
             >
-              <input value={answer} required maxLength={8192} autoComplete="off" placeholder={value.prompt} aria-label={value.prompt} onChange={event => setAnswer(event.currentTarget.value)} />
-              <button type="submit" disabled={busy || !answer.trim()}>{t('reply')}</button>
-            </form>
+              {copied
+                ? t('copied')
+                : t('copyLink')}
+            </button>
           )}
+          {value.notice?.code && (
+            <span>
+              {`${t('code')}: `}
+              <code>{value.notice.code}</code>
+            </span>
+          )}
+          {button(t('cancel'), { action: 'login_cancel', attemptId: value.id })}
         </div>
       )
     }
@@ -326,8 +312,6 @@ export function createAccountsPage(
                           : channel.id)
                         setLabel('')
                         setApiKey('')
-                        setAnswer('')
-                        setPaste(false)
                       }}
                     >
                       {form === channel.id

@@ -70,7 +70,7 @@ function isNotice(value: unknown): value is LoginNotice {
 function isLogin(value: unknown): value is LoginView {
   return isObject(value) && typeof value.id === 'string' && isChannelId(value.channel)
     && (value.status === 'pending' || value.status === 'authorized' || value.status === 'cancelled' || value.status === 'error')
-    && optionalString(value.prompt) && optionalString(value.error)
+    && optionalString(value.error)
     && (value.notice === undefined || isNotice(value.notice))
 }
 
@@ -97,7 +97,7 @@ export function readLogin(value: unknown): LoginView {
 
 export function isLoginRequest(request: ClientRequest): request is LoginRequest {
   return request.action === 'login_start' || request.action === 'login_status'
-    || request.action === 'login_reply' || request.action === 'login_cancel'
+    || request.action === 'login_cancel'
 }
 
 export function channelOf(provider: unknown): ChannelId | undefined {

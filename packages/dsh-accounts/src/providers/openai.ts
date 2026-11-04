@@ -36,7 +36,7 @@ export async function loginOpenAI(interaction: LoginInteraction): Promise<OAuthT
       notify: (event) => {
         switch (event.type) {
           case 'auth_url':
-            notify({ url: event.url, message: 'Complete sign-in in your browser, or paste the final redirect URL.' })
+            notify({ url: event.url, message: 'Complete sign-in in your browser.' })
             break
           case 'device_code':
             notify({ url: event.verificationUri, code: event.userCode })

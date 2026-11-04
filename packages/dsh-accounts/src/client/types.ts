@@ -14,7 +14,6 @@ export type SnapshotRequest
 export type LoginRequest
   = | { action: 'login_start', channel: ChannelId, label: string }
     | { action: 'login_status' | 'login_cancel', attemptId: string }
-    | { action: 'login_reply', attemptId: string, answer: string }
 
 export type ClientRequest = SnapshotRequest | LoginRequest
 export type MeasuredQuotaWindow = QuotaWindow & { usedPercent: number }

@@ -117,13 +117,11 @@ export interface LoginView {
   channel: ChannelId
   status: 'pending' | 'authorized' | 'cancelled' | 'error'
   notice?: LoginNotice
-  prompt?: string
   error?: string
 }
 
 export interface LoginAttempt extends LoginView {
   controller: AbortController
-  reply?: (answer: string) => void
 }
 
 export interface AccountSnapshot {

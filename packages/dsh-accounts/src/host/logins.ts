@@ -41,9 +41,6 @@ function view(attempt: LoginAttempt): LoginView {
           notice: { ...attempt.notice },
         }
       : {}),
-    ...(attempt.prompt
-      ? { prompt: attempt.prompt }
-      : {}),
     ...(attempt.error
       ? { error: attempt.error }
       : {}),
@@ -70,18 +67,13 @@ export class Logins {
       throw new Error('Plugin is unloading')
     if (action === 'login_start')
       return this.begin(channelFor(args.channel).id, text(args.label, 'account label'))
-    if (!['login_reply', 'login_cancel', 'login_status'].includes(action))
+    if (!['login_cancel', 'login_status'].includes(action))
       throw new Error('Unknown login action')
     const attempt = this.attempts.get(text(args.attemptId, 'login attempt id'))
     if (!attempt)
       throw new Error('Login attempt expired; start again')
     if (action === 'login_cancel' && attempt.status === 'pending')
       attempt.controller.abort(new Error('Login cancelled'))
-    if (action === 'login_reply') {
-      if (attempt.status !== 'pending' || !attempt.reply)
-        throw new Error('Login is not waiting for input')
-      attempt.reply(text(args.answer, 'login answer', 8192))
-    }
     return view(attempt)
   }
 
@@ -107,8 +99,6 @@ export class Logins {
     const signal = attempt.controller.signal
     const clear = (): void => {
       delete attempt.notice
-      delete attempt.prompt
-      delete attempt.reply
     }
     const timer = setTimeout(() => attempt.controller.abort(new Error('Login timed out')), 15 * 60_000)
     timer.unref()
@@ -121,7 +111,7 @@ export class Logins {
     const interaction: LoginInteraction = {
       signal,
       notify: notice => this.notify(attempt, notice),
-      prompt: (message, manual) => this.prompt(attempt, message, manual),
+      prompt: message => this.prompt(attempt, message),
     }
     void this.run(attempt, label, interaction).finally(() => {
       clearTimeout(timer)
@@ -169,40 +159,13 @@ export class Logins {
     attempt.notice = next
   }
 
-  private prompt(attempt: LoginAttempt, message: string, manual?: AbortSignal): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const signal = AbortSignal.any([
-        attempt.controller.signal,
-        ...(manual
-          ? [manual]
-          : []),
-      ])
-      if (signal.aborted) {
-        reject(signal.reason)
-        return
-      }
-      if (attempt.reply) {
-        reject(new Error('Login is already waiting for input'))
-        return
-      }
-      function clear(): void {
-        signal.removeEventListener('abort', abort)
-        delete attempt.reply
-        delete attempt.prompt
-      }
-      function abort(): void {
-        clear()
-        reject(signal.reason)
-      }
-      attempt.prompt = message
-      attempt.reply = (answer) => {
-        clear()
-        resolve(answer)
-      }
-      signal.addEventListener('abort', abort, { once: true })
-      if (signal.aborted)
-        abort()
-    })
+  /**
+   * The panel offers no free-text input any more, so a flow that needs one fails fast
+   * instead of holding the attempt open until its fifteen-minute deadline.
+   */
+  private async prompt(attempt: LoginAttempt, message: string): Promise<string> {
+    attempt.controller.signal.throwIfAborted()
+    throw new Error(`This sign-in needs manual input (${message}); sign in inside the provider's own app instead`)
   }
 
   dispose(): void {

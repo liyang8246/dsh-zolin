@@ -17,11 +17,11 @@ export const en = {
   resetCredit: 'Reset',
   confirmResetCredit: 'Spend one reset credit to clear the used 5-hour window?',
   cancel: 'Cancel',
-  open: 'Open authorization page',
+  copyLink: 'Copy authorization link',
+  copied: 'Copied',
+  copyFailed: 'Could not copy the link; select it manually',
   code: 'Authorization code',
-  reply: 'Continue',
   pending: 'Waiting for browser authorization…',
-  paste: 'Callback blocked? Paste the redirect URL',
   loading: 'Loading…',
   unavailable: 'Unavailable',
   notFetched: 'Not fetched',
@@ -57,11 +57,11 @@ export const zh: Record<keyof typeof en, string> = {
   resetCredit: '重置',
   confirmResetCredit: '消耗 1 次重置额度，清空已用的 5 小时窗口？',
   cancel: '取消',
-  open: '打开授权页面',
+  copyLink: '复制授权链接',
+  copied: '已复制',
+  copyFailed: '复制失败，请手动选择链接',
   code: '授权码',
-  reply: '继续',
   pending: '等待浏览器授权…',
-  paste: '无法自动回调？粘贴跳转地址',
   loading: '加载中…',
   unavailable: '不可用',
   notFetched: '未查询',
@@ -111,6 +111,6 @@ export const css = `
 .zph-track b{display:block;height:100%;border-radius:2px;background:var(--dsw-alias-brand-primary)}
 .zph-track[data-level=high] b{background:var(--dsw-alias-state-warn-primary)}
 .zph-track[data-level=full] b{background:var(--dsw-alias-state-error-primary)}
-.zph-accounts .zph-login{padding:10px 12px;border-radius:8px;border:1px solid var(--dsw-alias-border-l2);display:flex;flex-direction:column;gap:8px;align-self:stretch}.zph-accounts .zph-login .zph-row{gap:12px 14px}.zph-accounts .zph-login button.zph-link{padding:2px 0}.zph-accounts code{font-family:monospace;user-select:all}.zph-accounts .zph-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.zph-accounts .zph-login{margin-top:10px;padding:8px 10px;border-radius:8px;border:1px solid var(--dsw-alias-border-l2);display:flex;align-items:center;gap:8px;flex-wrap:wrap;align-self:stretch}.zph-accounts code{font-family:monospace;user-select:all}.zph-accounts .zph-actions{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
 @media(max-width:520px){.zph-accounts .zph-actions{margin-left:0}}
 `
