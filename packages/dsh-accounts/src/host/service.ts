@@ -150,7 +150,7 @@ export class ModelAccountsService {
     await this.refreshQuota(id, signal)
   }
 
-  async dispatch(raw: unknown, origin: 'ui' | 'agent', signal?: AbortSignal): Promise<unknown> {
+  async dispatch(raw: unknown, signal?: AbortSignal): Promise<unknown> {
     if (this.controller.signal.aborted)
       throw new Error('Plugin is unloading')
     const args = record(raw)
@@ -159,7 +159,7 @@ export class ModelAccountsService {
       case 'list': {
         const snapshot = await this.snapshot()
         const login = this.logins.pending
-        return origin === 'ui' && login
+        return login
           ? { ...snapshot, login }
           : snapshot
       }
@@ -182,15 +182,10 @@ export class ModelAccountsService {
         break
       }
       case 'reset_credit': {
-        // Spending an account's reset credit stays user-only, like authentication.
-        if (origin !== 'ui')
-          throw new Error('Resetting quota is user-only; open Settings → Model Accounts')
         await this.resetCredit(text(args.id, 'account id'), signal)
         break
       }
       case 'set_filter': {
-        if (origin !== 'ui')
-          throw new Error('The model filter is user-only; open Settings → Model Accounts')
         await this.accounts.saveFilter(filterText(args.filter))
         break
       }
@@ -209,8 +204,6 @@ export class ModelAccountsService {
         break
       }
       default:
-        if (origin !== 'ui')
-          throw new Error('Authentication is user-only; open Settings → Model Accounts')
         if (action !== 'add_key')
           return this.logins.dispatch(action, args)
         await this.accounts.add(channelFor(args.channel).id, text(args.label, 'account label'), {

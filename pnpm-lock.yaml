@@ -71,9 +71,6 @@ importers:
       '@deepseek-ai/dsh-llm':
         specifier: 0.2.1-rc.5
         version: 0.2.1-rc.5(@deepseek-ai/cordis@4.0.5)
-      '@deepseek-ai/dsh-tools':
-        specifier: 0.2.1-rc.5
-        version: 0.2.1-rc.5(838c99649576d6611fa9994cb21a266c)
       '@earendil-works/pi-ai':
         specifier: 1.1.0
         version: 1.1.0(@aws-sdk/credential-provider-node@3.972.90)(@smithy/signature-v4@5.7.4)(undici@8.11.2)(ws@8.22.0)(zod@4.6.7)
