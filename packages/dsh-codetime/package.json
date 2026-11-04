@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-codetime",
   "type": "module",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Report DeepSeek Harness coding activity to codetime.dev; set the upload token in Settings.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-codetime" },
   "exports": {
