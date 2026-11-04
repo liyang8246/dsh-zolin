@@ -40,5 +40,11 @@
     "resolvedVersion": "0.1.2704",
     "repoUrl": "https://github.com/yetone/magpie.git",
     "ref": "b2f7818d2ebffe695bfb4754e87663936939169e"
+  },
+  {
+    "name": "dsh-connect-workbuddy",
+    "resolvedVersion": "5.18.0",
+    "repoUrl": "https://github.com/dingminhua/dsh-connect-workbuddy.git",
+    "ref": "06006e41c6b9dfb5d112b7630747b4d74ec4045c"
   }
 ]
