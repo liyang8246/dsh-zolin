@@ -8,7 +8,7 @@ DeepSeek Harness 插件集。按需安装：
 
 ## 构建
 
-Node.js ≥22.19，pnpm 11.28.5，Harness `>=0.2.1-rc.5 <0.3.0`
+Node.js ≥22.19，pnpm 11.28.5，Harness `>=0.2.2-rc.1 <0.3.0`（宿主需要 Node.js ≥24.9）
 
 ```sh
 pnpm install --frozen-lockfile

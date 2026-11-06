@@ -9,7 +9,7 @@ Read-only dependency source repositories are available under `.agents/clonedeps/
 
 | Dependency | Version | Path |
 | --- | --- | --- |
-| `@deepseek-ai/dsh-root` | `0.2.1-rc.5` | `.agents/clonedeps/repos/@deepseek-ai__dsh-root__b830` |
+| `@deepseek-ai/dsh-root` | `0.2.2-rc.1` | `.agents/clonedeps/repos/@deepseek-ai__dsh-root__6649` |
 | `CLIProxyAPI` | `8.0.51` | `.agents/clonedeps/repos/CLIProxyAPI__7cad` |
 | `cockpit-tools` | `1.3.78` | `.agents/clonedeps/repos/cockpit-tools__02cb` |
 | `codex-monorepo` | `0.166.0` | `.agents/clonedeps/repos/codex-monorepo__6ff1` |

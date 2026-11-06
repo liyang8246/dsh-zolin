@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-zephyr",
   "type": "module",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Standalone Zephyr coding preset, persona, slim tool set and a local web_fetch for DeepSeek Harness.",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   ],
   "engines": {
     "node": ">=22.19.0",
-    "dsh": ">=0.2.1-rc.5 <0.3.0"
+    "dsh": ">=0.2.2-rc.1 <0.3.0"
   },
   "scripts": {
     "build": "tsdown",
@@ -41,12 +41,12 @@
     "turndown": "^7.2.4"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "4.0.5",
-    "@deepseek-ai/dsh-sandbox-policy": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-shell": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-system-prompt": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-tools": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-working-directory": "0.2.1-rc.5",
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-shell": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-system-prompt": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-working-directory": "0.2.2-rc.1",
     "@types/turndown": "^5.0.6"
   }
 }

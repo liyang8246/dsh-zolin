@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-accounts",
   "type": "module",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Independent multi-account Codex, OpenCode Go, CommandCode Go and WorkBuddy plugin for DeepSeek Harness.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-accounts" },
   "exports": {
@@ -13,7 +13,7 @@
     "./package.json": "./package.json"
   },
   "files": ["cordis.patch.yml", "icon.svg", "lib/", "locale/*.json"],
-  "engines": { "node": ">=22.19.0", "dsh": ">=0.2.1-rc.5 <0.3.0" },
+  "engines": { "node": ">=22.19.0", "dsh": ">=0.2.2-rc.1 <0.3.0" },
   "scripts": {
     "build": "node scripts/update-models.ts --check && tsdown && node scripts/build-client.ts && tsdown scripts/self-check.ts --format esm --target node22 --out-dir .self-check --clean && node .self-check/self-check.js",
     "self-check": "tsdown scripts/self-check.ts --format esm --target node22 --out-dir .self-check --clean && node .self-check/self-check.js",
@@ -21,19 +21,19 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "4.0.5",
-    "@deepseek-ai/dsh-attachment": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-connection": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-locale": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-modules": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-conversation": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-model-selection": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-renderer": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-session": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-settings": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-client-ui-slots": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-credentials": "0.2.1-rc.5",
-    "@deepseek-ai/dsh-llm": "0.2.1-rc.5",
+    "@deepseek-ai/cordis": "4.1.0",
+    "@deepseek-ai/dsh-attachment": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-connection": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-locale": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-modules": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-conversation": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-model-selection": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-session": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-settings": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-credentials": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-llm": "0.2.2-rc.1",
     "@earendil-works/pi-ai": "1.1.0"
   },
   "dsh": {
