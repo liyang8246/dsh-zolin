@@ -21,8 +21,17 @@ export async function call(request: StatusRequest, signal?: AbortSignal): Promis
     body: JSON.stringify(request),
     signal,
   })
-  const value: unknown = await response.json()
+  const text = await response.text()
   signal?.throwIfAborted()
+  let value: unknown
+  try {
+    value = JSON.parse(text)
+  }
+  catch {
+    throw new Error(response.ok
+      ? 'CodeTime returned an invalid JSON response'
+      : `CodeTime HTTP ${response.status}`)
+  }
   if (!response.ok)
     throw new Error(errorText(value) ?? `HTTP ${response.status}`)
   if (!isStatus(value))

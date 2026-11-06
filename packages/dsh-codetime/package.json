@@ -1,7 +1,7 @@
 {
   "name": "@liyang8246/dsh-codetime",
   "type": "module",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Report DeepSeek Harness coding activity to codetime.dev; set the upload token in Settings.",
   "repository": { "type": "git", "url": "https://github.com/liyang8246/dsh-zolin.git", "directory": "packages/dsh-codetime" },
   "exports": {
@@ -15,7 +15,7 @@
   "files": ["cordis.patch.yml", "icon.svg", "lib/", "locale/*.json"],
   "engines": { "node": ">=22.19.0", "dsh": ">=0.2.2-rc.1 <0.3.0" },
   "scripts": {
-    "build": "tsdown && node scripts/build-client.ts",
+    "build": "tsdown && node scripts/build-client.ts && node scripts/check-settings.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

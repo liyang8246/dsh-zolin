@@ -19,8 +19,8 @@ import { StateFile } from './host/state.js'
 /** Cordis plugin name used by loader diagnostics. */
 export const name = 'codetime'
 
-/** The Host session store feeds the fold. */
-export const inject = ['sessions']
+/** Wait for both the session store and the settings route transport. */
+export const inject = ['sessions', 'connection']
 
 /** Fold window, upload cadence, retention, and where local state lives. */
 export interface ConfigOptions {
@@ -238,11 +238,7 @@ export function apply(ctx: Context, config: ConfigOptions): void {
     void state.flush()
   })
 
-  const connection = ctx.get('connection')
-  if (!connection)
-    return
-
-  ctx.effect(() => connection.fetch.register({
+  ctx.effect(() => ctx.connection.fetch.register({
     path: '/api/codetime',
     methods: ['POST'],
     requestBody: 'buffered',

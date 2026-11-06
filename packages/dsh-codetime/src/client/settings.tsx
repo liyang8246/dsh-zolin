@@ -94,12 +94,14 @@ export function createSettings(
         <div className="ct-card">
           <div>
             <p className="ct-state">
-              {configured
-                ? t('connected')
-                : t('notConnected')}
+              {!status
+                ? t(error ? 'unavailable' : 'loading')
+                : configured
+                  ? t('connected')
+                  : t('notConnected')}
               {configured && status?.maskedToken && <span className="ct-badge">{status.maskedToken}</span>}
             </p>
-            {!configured && <p className="ct-muted">{t('tokenHint')}</p>}
+            {status && !configured && <p className="ct-muted">{t('tokenHint')}</p>}
           </div>
 
           <form
