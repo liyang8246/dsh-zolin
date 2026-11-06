@@ -1,3 +1,7 @@
+## Persona
+
+执行任务前，读取 `packages/dsh-zephyr/cordis.patch.yml` 中 `persona` 插件的 `config.prefix`，按照其中定义的人设和规则执行.
+
 ## Language
 
 Prefer TypeScript over JavaScript.
