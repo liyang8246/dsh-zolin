@@ -111,20 +111,8 @@ export async function* streamPrepared(ctx: Context, options: GenerateOptions, ac
       transport: 'sse',
       fetch: async (input, init) => {
         const response = await globalThis.fetch(input, init)
-        if (!response.ok) {
+        if (!response.ok)
           wireFacts.status = response.status
-          const milliseconds = response.headers.get('retry-after-ms')
-          const retry = response.headers.get('retry-after')
-          const delay = milliseconds
-            ? Number(milliseconds)
-            : retry
-              ? (/^\d+(?:\.\d+)?$/.test(retry)
-                  ? Number(retry) * 1000
-                  : Date.parse(retry) - Date.now())
-              : undefined
-          if (delay !== undefined && Number.isFinite(delay) && delay > 0)
-            wireFacts.providerRetryAfterMs = delay
-        }
         return response
       },
       // The gateway gates on this client identity, so it replaces the default headers

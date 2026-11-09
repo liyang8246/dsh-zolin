@@ -16,14 +16,22 @@ const retryPolicy: ResolvedNormalRetryPolicy = Object.freeze({
   retryableCodes: Object.freeze([
     'EMPTY_RESPONSE',
     'RATE_LIMIT',
+    'QUOTA',
+    'QUOTA_EXCEEDED',
     'SERVER',
     'TIMEOUT',
     'TRANSPORT',
+    'NETWORK',
+    'STREAM_CLOSED',
     'PROVIDER_ERROR',
   ]),
-  initialDelayMs: 1000,
+  // Retries run on a fixed 10s cadence: equal initial and max delay flatten the
+  // exponential, zero jitter removes the spread. Upstream Retry-After is
+  // deliberately not forwarded, because llm-retry would prefer it and drop the
+  // retry outright once its wait exceeds maxDelayMs.
+  initialDelayMs: 10000,
   maxDelayMs: 10000,
-  jitterRatio: 0.2,
+  jitterRatio: 0,
 })
 
 function channelOf(provider: string): Channel {

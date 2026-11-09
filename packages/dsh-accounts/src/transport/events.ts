@@ -35,7 +35,6 @@ export function failure(message: string, aborted: boolean, details?: unknown): F
     code = 'AUTH'
   else if (status && status >= 500)
     code = 'SERVER'
-  const retry = facts?.providerRetryAfterMs
   const offload = facts?.offloadImages
   return {
     kind: aborted ? 'aborted' : 'error',
@@ -45,9 +44,6 @@ export function failure(message: string, aborted: boolean, details?: unknown): F
       ...(status === undefined
         ? {}
         : { status }),
-      ...(typeof retry === 'number' && Number.isFinite(retry) && retry > 0
-        ? { providerRetryAfterMs: retry }
-        : {}),
       ...(typeof offload === 'number' && Number.isSafeInteger(offload) && offload > 0
         ? { offloadImages: offload }
         : {}),
