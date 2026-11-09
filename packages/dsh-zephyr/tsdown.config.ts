@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     'uv-run': 'src/uv-run/index.ts',
     'webfetch': 'src/webfetch/index.ts',
+    'tool-mask': 'src/tool-mask/index.ts',
   },
   outDir: 'lib',
   format: 'esm',

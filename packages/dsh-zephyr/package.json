@@ -11,6 +11,7 @@
   "exports": {
     "./uv-run": "./lib/uv-run.js",
     "./webfetch": "./lib/webfetch.js",
+    "./tool-mask": "./lib/tool-mask.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg",
     "./cordis.patch.yml": "./cordis.patch.yml",
