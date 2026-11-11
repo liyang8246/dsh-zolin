@@ -156,12 +156,15 @@ export class Logins {
   }
 
   /**
-   * The panel offers no free-text input any more, so a flow that needs one fails fast
-   * instead of holding the attempt open until its fifteen-minute deadline.
+   * The panel offers no free-text input, so a flow's manual fallback stays pending instead of
+   * failing: pi starts it alongside the loopback callback and treats an early failure as fatal.
    */
   private async prompt(attempt: LoginAttempt, message: string): Promise<string> {
-    attempt.controller.signal.throwIfAborted()
-    throw new Error(`This sign-in needs manual input (${message}); sign in inside the provider's own app instead`)
+    const signal = attempt.controller.signal
+    signal.throwIfAborted()
+    return new Promise<string>((_, reject) => {
+      signal.addEventListener('abort', () => reject(new Error(`Sign-in cancelled before manual input: ${message}`)), { once: true })
+    })
   }
 
   dispose(): void {
