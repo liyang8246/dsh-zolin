@@ -4,7 +4,6 @@ import type { Accounts } from './accounts.js'
 import { randomUUID } from 'node:crypto'
 import { loginOpenAI } from '../providers/openai.js'
 import { loginOpenCode } from '../providers/opencode.js'
-import { loginWorkBuddy } from '../providers/workbuddy.js'
 import { channelFor } from '../shared/channels.js'
 import { text } from '../shared/validation.js'
 
@@ -18,9 +17,6 @@ const authorizationHosts: Record<ChannelId, readonly string[]> = {
     'opencode.ai',
   ],
   'commandcode-go': [],
-  'workbuddy-cn': [
-    'www.codebuddy.cn',
-  ],
 }
 
 function loginFor(channel: ChannelId): (interaction: LoginInteraction) => Promise<OAuthTokens> {
@@ -28,7 +24,7 @@ function loginFor(channel: ChannelId): (interaction: LoginInteraction) => Promis
     return loginOpenAI
   if (channel === 'opencode-go')
     return loginOpenCode
-  return loginWorkBuddy
+  throw new Error('OAuth is not supported by this channel')
 }
 
 function view(attempt: LoginAttempt): LoginView {

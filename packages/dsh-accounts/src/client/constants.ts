@@ -31,13 +31,6 @@ export const en = {
   week: 'Week',
   month: 'Month',
   other: 'Other window',
-  checkin: 'Check in',
-  checkedIn: 'checked in today',
-  notCheckedIn: 'not checked in',
-  streak: 'streak',
-  days: 'd',
-  weekProgress: 'this week',
-  claimBenefits: 'Claim rewards',
 }
 
 export const zh: Record<keyof typeof en, string> = {
@@ -71,13 +64,6 @@ export const zh: Record<keyof typeof en, string> = {
   week: '周',
   month: '月',
   other: '其他窗口',
-  checkin: '签到',
-  checkedIn: '今日已签',
-  notCheckedIn: '今日未签',
-  streak: '连签',
-  days: '天',
-  weekProgress: '本周',
-  claimBenefits: '领取权益',
 }
 
 export const quotaPeriods = ['5h', 'week', 'month'] as const
@@ -86,7 +72,6 @@ export const authorizationHosts: Record<ChannelId, readonly string[]> = {
   'openai-codex': ['auth.openai.com', 'chatgpt.com'],
   'opencode-go': ['opencode.ai'],
   'commandcode-go': [],
-  'workbuddy-cn': ['www.codebuddy.cn'],
 }
 
 export const css = `
@@ -100,7 +85,6 @@ export const css = `
 .zph-accounts button:focus-visible,.zph-accounts input:focus-visible,.zph-accounts a:focus-visible{outline:2px solid var(--dsw-alias-brand-primary);outline-offset:2px}.zph-accounts a{color:var(--dsw-alias-brand-primary)}
 .zph-accounts .zph-quota{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.zph-accounts .zph-window{padding:8px 10px;border-radius:8px;background:var(--dsw-alias-bg-layer-2);font-size:11px;overflow-wrap:anywhere}.zph-accounts .zph-window-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .zph-accounts .zph-track{margin:6px 0 0;width:100%}.zph-accounts .zph-error{color:var(--dsw-alias-state-error-primary);overflow-wrap:anywhere}.zph-accounts .zph-quota-unavailable{padding-left:5px}.zph-accounts .zph-quota-unavailable > p{display:inline}.zph-accounts .zph-quota-unavailable > p + p{margin-left:8px}
-.zph-accounts .zph-checkin{margin-left:5px}
 .zph-accounts .zph-add{padding:12px 16px;border-top:1px solid var(--dsw-alias-border-l1)}.zph-accounts .zph-form{display:flex;flex-direction:column;gap:10px;margin-top:10px}.zph-accounts .zph-form label{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-grow{flex:1 1 180px;min-width:0}.zph-accounts .zph-align-end{align-items:flex-end}
 .zph-accounts .zph-filter{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-filter label{display:flex;flex-direction:column;gap:4px}.zph-accounts .zph-filter input{width:100%}
 .zph-accounts .zph-switch{display:flex;align-items:center;cursor:pointer}.zph-accounts .zph-switch input{appearance:none;-webkit-appearance:none;position:relative;width:36px;height:20px;min-height:0;padding:0;border:0;border-radius:10px;background:var(--dsw-alias-bg-layer-2);cursor:pointer;transition:background .15s}

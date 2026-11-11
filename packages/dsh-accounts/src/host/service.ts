@@ -1,5 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type { AccountSnapshot, BenefitView, CatalogModel, ChannelId, CheckinView, ModelCatalog, QuotaView, StoredAccount } from '../shared/types.js'
+import type { AccountSnapshot, CatalogModel, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
 import { setTimeout as delay } from 'node:timers/promises'
 import { catalogMetadata, modelCatalog } from '../providers/catalog.generated.js'
 import { fetchCodexModels } from '../providers/codex-models.js'
@@ -7,16 +7,11 @@ import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
 import { refreshOpenCode } from '../providers/opencode.js'
 import { consumeCodexResetCredit, fetchQuota } from '../providers/quota.js'
-import { claimWorkBuddyBenefits, claimWorkBuddyCheckin, fetchWorkBuddyBenefits, fetchWorkBuddyCheckin, fetchWorkBuddyModels, fetchWorkBuddyQuota, refreshWorkBuddy } from '../providers/workbuddy.js'
 import { channelFor, channels } from '../shared/channels.js'
 import { safeError } from '../shared/errors.js'
 import { filterText, record, text } from '../shared/validation.js'
 import { Accounts } from './accounts.js'
 import { Logins } from './logins.js'
-
-function isWorkBuddy(channel: ChannelId): boolean {
-  return channel === 'workbuddy-cn'
-}
 
 export class ModelAccountsService {
   readonly accounts: Accounts
@@ -28,10 +23,6 @@ export class ModelAccountsService {
   private readonly fetching = new Map<string, Promise<void>>()
   /** Live model lists keyed by channel, so a repeat call within ten minutes costs no request. */
   private readonly live = new Map<ChannelId, { account: string, at: number, models: CatalogModel[] }>()
-  private readonly checkins = new Map<string, CheckinView>()
-  private readonly benefits = new Map<string, BenefitView[]>()
-  /** Last automatic check-in sweep, so the 60s quota cycle does not hammer the endpoint. */
-  private autoCheckinAt = 0
   private timer?: ReturnType<typeof setInterval>
   private cycling = false
 
@@ -41,8 +32,6 @@ export class ModelAccountsService {
         return refreshOpenAI(tokens, signal)
       if (channel === 'opencode-go')
         return refreshOpenCode(tokens, signal)
-      if (isWorkBuddy(channel))
-        return refreshWorkBuddy(tokens, signal)
       throw new Error('OAuth is not supported by this channel')
     })
     this.logins = new Logins(this.accounts, () => this.onChange?.())
@@ -56,18 +45,10 @@ export class ModelAccountsService {
       channels,
       accounts: views.map((account) => {
         const quota = this.quotas.get(account.id) ?? saved[account.id]
-        const checkin = this.checkins.get(account.id)
-        const benefits = this.benefits.get(account.id)
         return {
           ...account,
           ...(quota
             ? { quota }
-            : {}),
-          ...(checkin
-            ? { checkin }
-            : {}),
-          ...(benefits?.length
-            ? { benefits }
             : {}),
         }
       }),
@@ -84,9 +65,7 @@ export class ModelAccountsService {
   async refreshCatalog(channel: ChannelId, signal?: AbortSignal): Promise<void> {
     const fetchModels = channel === 'openai-codex'
       ? fetchCodexModels
-      : isWorkBuddy(channel)
-        ? (account: StoredAccount, manual?: AbortSignal) => fetchWorkBuddyModels(account, manual)
-        : undefined
+      : undefined
     if (!fetchModels || this.controller.signal.aborted)
       return
     const account = await this.accounts.resolve(channel, signal)
@@ -118,16 +97,12 @@ export class ModelAccountsService {
         const account = await this.accounts.resolve(view.channel, signal, id)
         const quota = account.channel === 'commandcode-go'
           ? await fetchCommandCodeQuota(account, signal)
-          : isWorkBuddy(account.channel)
-            ? await fetchWorkBuddyQuota(account, signal)
-            : await fetchQuota(account, signal)
+          : await fetchQuota(account, signal)
         if (!this.controller.signal.aborted && (await this.accounts.list()).some(account => account.id === id)) {
           this.quotas.set(id, quota)
           // Persist successful answers only; transient errors must not replace the restart cache.
           void this.accounts.saveQuota(id, quota).catch(() => {})
         }
-        if (isWorkBuddy(account.channel))
-          await this.refreshRewards(account, signal)
       }
       catch (error) {
         if (!this.controller.signal.aborted && (await this.accounts.list()).some(account => account.id === id)) {
@@ -151,81 +126,6 @@ export class ModelAccountsService {
     }
     finally {
       this.fetching.delete(id)
-    }
-  }
-
-  /**
-   * Read the check-in state and claimable benefits of one WorkBuddy account.
-   * @param account - the resolved account; only WorkBuddy has these rewards.
-   * @param signal - caller cancellation.
-   */
-  private async refreshRewards(account: StoredAccount, signal?: AbortSignal): Promise<void> {
-    try {
-      this.checkins.set(account.id, await fetchWorkBuddyCheckin(account, signal))
-    }
-    catch {
-      // A check-in read is advisory; the credit view must survive its failure.
-    }
-    try {
-      const benefits = await fetchWorkBuddyBenefits(account, signal)
-      if (benefits.length)
-        this.benefits.set(account.id, benefits)
-      else
-        this.benefits.delete(account.id)
-    }
-    catch {
-      this.benefits.delete(account.id)
-    }
-  }
-
-  /** Check in once, then re-read the rewards so the card shows the new balance. */
-  private async claimCheckin(id: string, signal?: AbortSignal): Promise<void> {
-    const view = (await this.accounts.list()).find(account => account.id === id)
-    if (!view)
-      throw new Error('Account not found')
-    if (!isWorkBuddy(view.channel))
-      throw new Error('Only WorkBuddy accounts have a daily check-in')
-    const account = await this.accounts.resolve(view.channel, signal, id)
-    await claimWorkBuddyCheckin(account, signal)
-    await this.refreshRewards(account, signal)
-    await this.refreshQuota(id, signal)
-  }
-
-  private async claimBenefits(id: string, signal?: AbortSignal): Promise<void> {
-    const view = (await this.accounts.list()).find(account => account.id === id)
-    if (!view)
-      throw new Error('Account not found')
-    if (!isWorkBuddy(view.channel))
-      throw new Error('Only WorkBuddy accounts have claimable benefits')
-    const account = await this.accounts.resolve(view.channel, signal, id)
-    await claimWorkBuddyBenefits(account, signal)
-    await this.refreshRewards(account, signal)
-    await this.refreshQuota(id, signal)
-  }
-
-  /**
-   * Claim the daily check-in for every WorkBuddy account that has not signed in yet.
-   * Runs at start and then once per sweep interval, so a long-running app still signs in daily.
-   */
-  private async autoCheckin(): Promise<void> {
-    if (this.cycling || Date.now() - this.autoCheckinAt < 6 * 3_600_000)
-      return
-    this.autoCheckinAt = Date.now()
-    const accounts = await this.accounts.list()
-    for (const view of accounts) {
-      if (!isWorkBuddy(view.channel) || this.controller.signal.aborted)
-        continue
-      try {
-        const account = await this.accounts.resolve(view.channel, this.controller.signal, view.id)
-        const checkin = await fetchWorkBuddyCheckin(account, this.controller.signal)
-        this.checkins.set(view.id, checkin)
-        if (checkin.active && !checkin.checkedIn) {
-          await claimWorkBuddyCheckin(account, this.controller.signal)
-          this.checkins.set(view.id, await fetchWorkBuddyCheckin(account, this.controller.signal))
-          await this.refreshQuota(view.id, this.controller.signal)
-        }
-      }
-      catch { /* A failed automatic check-in is retried on the next sweep. */ }
     }
   }
 
@@ -286,21 +186,11 @@ export class ModelAccountsService {
         const id = text(args.id, 'account id')
         await this.accounts.remove(id)
         this.quotas.delete(id)
-        this.checkins.delete(id)
-        this.benefits.delete(id)
         this.onChange?.()
         break
       }
       case 'reset_credit': {
         await this.resetCredit(text(args.id, 'account id'), signal)
-        break
-      }
-      case 'checkin': {
-        await this.claimCheckin(text(args.id, 'account id'), signal)
-        break
-      }
-      case 'claim_benefits': {
-        await this.claimBenefits(text(args.id, 'account id'), signal)
         break
       }
       case 'set_filter': {
@@ -338,7 +228,6 @@ export class ModelAccountsService {
       return
     this.timer = setInterval(() => void this.refreshCycle(), 60_000)
     this.timer.unref()
-    void this.autoCheckin()
   }
 
   private async refreshCycle(): Promise<void> {
@@ -356,7 +245,6 @@ export class ModelAccountsService {
     }
     catch { /* Shutdown or unavailable credentials are retried only on the next scheduled cycle. */ }
     finally { this.cycling = false }
-    await this.autoCheckin().catch(() => {})
   }
 
   dispose(): void {
@@ -365,7 +253,5 @@ export class ModelAccountsService {
     this.timer = undefined
     this.logins.dispose()
     this.quotas.clear()
-    this.checkins.clear()
-    this.benefits.clear()
   }
 }

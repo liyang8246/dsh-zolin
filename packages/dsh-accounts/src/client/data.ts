@@ -21,8 +21,7 @@ function isChannelId(value: unknown): value is ChannelId {
 
 function isChannel(value: unknown): value is Channel {
   return isObject(value) && isChannelId(value.id) && typeof value.name === 'string'
-    && (value.source === 'openai' || value.source === 'opencode-go' || value.source === 'commandcode'
-      || value.source === 'workbuddy-cn')
+    && (value.source === 'openai' || value.source === 'opencode-go' || value.source === 'commandcode')
     && Array.isArray(value.auth) && value.auth.every((item: unknown) => item === 'api-key' || item === 'oauth')
     && typeof value.consoleURL === 'string'
 }
@@ -41,26 +40,12 @@ function isQuota(value: unknown): value is QuotaView {
     && optionalString(value.reason) && optionalString(value.plan) && optionalNumber(value.resetCredits)
 }
 
-function isCheckin(value: unknown): boolean {
-  return isObject(value) && typeof value.active === 'boolean' && typeof value.checkedIn === 'boolean'
-    && optionalNumber(value.streakDays) && optionalNumber(value.dailyCredit)
-    && (value.weekProgress === undefined || (Array.isArray(value.weekProgress) && value.weekProgress.every(day => typeof day === 'boolean')))
-}
-
-function isBenefits(value: unknown): boolean {
-  return Array.isArray(value) && value.every(benefit => isObject(benefit)
-    && (benefit.kind === 'compensation' || benefit.kind === 'gift')
-    && optionalNumber(benefit.creditNum) && optionalString(benefit.endTime))
-}
-
 function isAccount(value: unknown): value is AccountView {
   return isObject(value) && typeof value.id === 'string' && isChannelId(value.channel)
     && typeof value.label === 'string' && typeof value.createdAt === 'string'
     && (value.auth === 'api-key' || value.auth === 'oauth') && typeof value.active === 'boolean'
     && optionalString(value.email) && optionalString(value.orgName)
     && (value.quota === undefined || isQuota(value.quota))
-    && (value.checkin === undefined || isCheckin(value.checkin))
-    && (value.benefits === undefined || isBenefits(value.benefits))
 }
 
 function isNotice(value: unknown): value is LoginNotice {

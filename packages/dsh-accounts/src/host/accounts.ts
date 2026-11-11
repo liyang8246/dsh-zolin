@@ -3,7 +3,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { CredentialKey, CredentialRecord } from '@deepseek-ai/dsh-credentials'
 import type { AccountState, AccountView, ChannelId, OAuthTokens, QuotaView, QuotaWindow, StoredAccount } from '../shared/types.js'
 import { randomUUID } from 'node:crypto'
-import { channelFor } from '../shared/channels.js'
+import { channelFor, channels } from '../shared/channels.js'
 import { record, text, validateTokens } from '../shared/validation.js'
 
 // Existing installations own this record independently of the package name.
@@ -95,20 +95,26 @@ export function readState(payload: unknown): AccountState {
   const state = record(payload, 'account store')
   if (state.version !== 1 || !Array.isArray(state.accounts))
     throw new Error('Unsupported account store version; credentials were not changed')
-  const accounts = state.accounts.map((raw): StoredAccount => {
+  const accounts = state.accounts.flatMap((raw): StoredAccount[] => {
     const account = record(raw, 'account')
+    // A channel this build no longer ships must not block the remaining accounts.
+    if (!channels.some(channel => channel.id === account.channel))
+      return []
     const channel = channelFor(account.channel).id
-    return {
-      id: text(account.id, 'account id'),
-      channel,
-      label: text(account.label, 'account label'),
-      createdAt: text(account.createdAt, 'account creation time'),
-      credential: readCredential(channel, account.credential),
-    }
+    return [
+      {
+        id: text(account.id, 'account id'),
+        channel,
+        label: text(account.label, 'account label'),
+        createdAt: text(account.createdAt, 'account creation time'),
+        credential: readCredential(channel, account.credential),
+      },
+    ]
   })
   if (new Set(accounts.map(account => account.id)).size !== accounts.length)
     throw new Error('Duplicate account ids in credential store')
-  const active = record(state.active, 'active account selection')
+  const active = Object.fromEntries(Object.entries(record(state.active, 'active account selection'))
+    .filter(([channel]) => channels.some(entry => entry.id === channel)))
   for (const [channel, id] of Object.entries(active)) {
     channelFor(channel)
     if (!accounts.some(account => account.id === id && account.channel === channel))

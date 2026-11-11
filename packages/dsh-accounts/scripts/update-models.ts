@@ -9,7 +9,7 @@ import { record, text } from '../src/shared/validation.ts'
 export const catalogURL = 'https://models.dev/api.json'
 export const sources = ['opencode-go', 'commandcode'] as const
 /** Sources with no models.dev entry: their rosters are read live from the provider. */
-const liveSources = ['openai', 'workbuddy-cn'] as const
+const liveSources = ['openai'] as const
 const target = new URL('../src/providers/catalog.generated.ts', import.meta.url)
 const digest = (value: unknown): string => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 
@@ -87,8 +87,7 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
   if (!response.ok)
     throw new Error(`models.dev returned HTTP ${response.status}; previous snapshot was not changed`)
   const catalog: ModelCatalog = {
-    'openai': [],
-    'workbuddy-cn': [],
+    openai: [],
     ...normalizeCatalog(await response.json()),
   }
   const metadata = {

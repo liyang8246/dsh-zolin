@@ -280,21 +280,6 @@ export function createAccountsPage(
                         </div>
                       )}
                       <Quota quota={account.quota} />
-                      {account.checkin?.active && (
-                        <div className="zph-row zph-checkin">
-                          <span className="zph-muted">
-                            {`${t('checkin')} · ${account.checkin.checkedIn
-                              ? t('checkedIn')
-                              : t('notCheckedIn')}`}
-                            {` · +${account.checkin.dailyCredit} · ${t('streak')} ${account.checkin.streakDays}${t('days')}`}
-                            {account.checkin.weekProgress
-                              ? ` · ${t('weekProgress')} ${account.checkin.weekProgress.filter(Boolean).length}/7`
-                              : ''}
-                          </span>
-                          {!account.checkin.checkedIn && button(t('checkin'), { action: 'checkin', id: account.id })}
-                        </div>
-                      )}
-                      {Boolean(account.benefits?.length) && button(`${t('claimBenefits')} (${account.benefits?.length})`, { action: 'claim_benefits', id: account.id })}
                     </article>
                   ))}
                   {!accounts.length && <p className="zph-account zph-muted">{t('empty')}</p>}
