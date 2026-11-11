@@ -54,9 +54,7 @@ export function createQuotaComponents(React: typeof import('react'), t: (path: s
   function QuotaBars({ windows }: QuotaBarsProps): ReactElement | null {
     if (!windows.length)
       return null
-    const labels = windows.map(window => `${window.period === '5h'
-      ? '5h'
-      : t(window.period)} ${t('left')} ${Math.round(leftOf(window))}%`)
+    const labels = windows.map(window => `${labelOf(window)} ${t('left')} ${Math.round(leftOf(window))}%`)
     return (
       <span className="zph-composer-quota" role="img" data-count={windows.length} title={labels.join(' · ')} aria-label={labels.join(', ')}>
         <style>{css}</style>
