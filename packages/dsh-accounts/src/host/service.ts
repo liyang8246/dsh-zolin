@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type { AccountSnapshot, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
-import { setTimeout as delay } from 'node:timers/promises'
 import { modelCatalog } from '../providers/catalog.js'
 import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
@@ -22,6 +21,8 @@ export class ModelAccountsService {
   private readonly fetching = new Map<string, Promise<void>>()
   private timer?: ReturnType<typeof setInterval>
   private cycling = false
+  /** Round-robin cursor: every account gets its turn, working or not. */
+  private cursor = 0
 
   constructor(ctx: Context) {
     this.accounts = new Accounts(ctx.credentials, (channel, tokens, signal) => {
@@ -199,7 +200,7 @@ export class ModelAccountsService {
   start(): void {
     if (this.timer || this.controller.signal.aborted)
       return
-    this.timer = setInterval(() => void this.refreshCycle(), 60_000)
+    this.timer = setInterval(() => void this.refreshCycle(), 30_000)
     this.timer.unref()
   }
 
@@ -208,13 +209,11 @@ export class ModelAccountsService {
       return
     this.cycling = true
     try {
-      const ids = (await this.accounts.list()).map(account => account.id)
-      for (const [index, id] of ids.entries()) {
-        this.controller.signal.throwIfAborted()
-        await this.refreshQuota(id, this.controller.signal)
-        if (index < ids.length - 1)
-          await delay(5_000, undefined, { signal: this.controller.signal })
-      }
+      const accounts = await this.accounts.list()
+      this.controller.signal.throwIfAborted()
+      const next = accounts[this.cursor++ % accounts.length]
+      if (next)
+        await this.refreshQuota(next.id, this.controller.signal)
     }
     catch { /* Shutdown or unavailable credentials are retried only on the next scheduled cycle. */ }
     finally { this.cycling = false }

@@ -32,7 +32,7 @@ export function createAccountStore(load: () => Promise<AccountSnapshot>): Accoun
       // Only read the Host's snapshot; provider quota refresh belongs to the Host.
       timer ??= setInterval(() => {
         void store.reload().catch(() => {})
-      }, 60_000)
+      }, 30_000)
       return () => {
         listeners.delete(listener)
         if (!listeners.size)
