@@ -1,8 +1,7 @@
 import type { Context } from '@deepseek-ai/cordis'
-import type { AccountSnapshot, CatalogModel, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
+import type { AccountSnapshot, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
 import { setTimeout as delay } from 'node:timers/promises'
 import { modelCatalog } from '../providers/catalog.js'
-import { fetchCodexModels } from '../providers/codex-models.js'
 import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
 import { refreshOpenCode } from '../providers/opencode.js'
@@ -15,14 +14,12 @@ import { Logins } from './logins.js'
 
 export class ModelAccountsService {
   readonly accounts: Accounts
-  readonly catalog: ModelCatalog = { ...modelCatalog }
+  readonly catalog: ModelCatalog = modelCatalog
   onChange?: () => void
   private readonly logins: Logins
   private readonly controller = new AbortController()
   private readonly quotas = new Map<string, QuotaView>()
   private readonly fetching = new Map<string, Promise<void>>()
-  /** Live model lists keyed by channel, so a repeat call within ten minutes costs no request. */
-  private readonly live = new Map<ChannelId, { account: string, at: number, models: CatalogModel[] }>()
   private timer?: ReturnType<typeof setInterval>
   private cycling = false
 
@@ -59,29 +56,6 @@ export class ModelAccountsService {
   async activeChannels(): Promise<ChannelId[]> {
     const accounts = await this.accounts.list()
     return channels.filter(channel => accounts.some(account => account.channel === channel.id && account.active)).map(channel => channel.id)
-  }
-
-  async refreshCatalog(channel: ChannelId, signal?: AbortSignal): Promise<void> {
-    const fetchModels = channel === 'openai-codex'
-      ? fetchCodexModels
-      : undefined
-    if (!fetchModels || this.controller.signal.aborted)
-      return
-    const account = await this.accounts.resolve(channel, signal)
-    const cached = this.live.get(channel)
-    if (cached?.account === account.id && Date.now() - cached.at < 10 * 60_000) {
-      this.catalog[channelFor(channel).source] = cached.models
-      return
-    }
-    const models = await fetchModels(account, signal)
-    if (this.controller.signal.aborted)
-      return
-    this.live.set(channel, {
-      account: account.id,
-      at: Date.now(),
-      models,
-    })
-    this.catalog[channelFor(channel).source] = models
   }
 
   private async refreshQuota(id: string, signal?: AbortSignal): Promise<void> {

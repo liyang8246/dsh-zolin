@@ -60,21 +60,12 @@ function describe(provider: string, channel: ChannelId, model: CatalogModel): Ll
   }
 }
 
-export function createTransport(ctx: Context, resolveAccount: (channel: ChannelId, signal?: AbortSignal) => Promise<StoredAccount>, modelCatalog: ModelCatalog, refreshCatalog?: (channel: ChannelId, signal?: AbortSignal) => Promise<void>): LlmAdapter {
-  // The live list is advisory: a failing refresh must never block a call with a known model.
-  const refresh = async (channel: ChannelId, signal?: AbortSignal) => {
-    if (!refreshCatalog)
-      return
-    try {
-      await refreshCatalog(channel, signal)
-    }
-    catch { /* keep the current catalog */ }
-  }
+export function createTransport(ctx: Context, resolveAccount: (channel: ChannelId, signal?: AbortSignal) => Promise<StoredAccount>, modelCatalog: ModelCatalog): LlmAdapter {
   const find = (provider: string, model: string) => {
     const channel = channelOf(provider)
     const entry = modelCatalog[channel.source].find(entry => entry.id === model)
     if (!entry)
-      throw new Error('Model is not in this channel\'s model list; sign in or refresh the catalog')
+      throw new Error('Model is not in this channel\'s model list; update the plugin')
     return { channel: channel.id, entry }
   }
   const adapter: LlmAdapter = {
@@ -84,19 +75,14 @@ export function createTransport(ctx: Context, resolveAccount: (channel: ChannelI
     imageRequestTarget(_provider, _model, image) { return { width: image.width, height: image.height, maxBytes: image.bytes } },
     async listModels(provider) {
       const channel = channelOf(provider)
-      await refresh(channel.id)
       return modelCatalog[channel.source].map(entry => describe(provider, channel.id, entry))
     },
     async resolveModel(provider, model, signal) {
-      signal?.throwIfAborted()
-      await refresh(channelOf(provider).id, signal)
       signal?.throwIfAborted()
       const found = find(provider, model)
       return describe(provider, found.channel, found.entry)
     },
     async prepareCall(provider, model, signal) {
-      signal?.throwIfAborted()
-      await refresh(channelOf(provider).id, signal)
       signal?.throwIfAborted()
       const { channel, entry } = find(provider, model)
       const account = structuredClone(await resolveAccount(channel, signal))

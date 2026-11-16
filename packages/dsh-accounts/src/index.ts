@@ -16,7 +16,7 @@ export const inject = [
 
 export function apply(ctx: Context): void {
   const service = new ModelAccountsService(ctx)
-  const transport = createTransport(ctx, (channel, signal) => service.accounts.resolve(channel, signal), service.catalog, (channel, signal) => service.refreshCatalog(channel, signal))
+  const transport = createTransport(ctx, (channel, signal) => service.accounts.resolve(channel, signal), service.catalog)
   ctx.effect(() => {
     let active = true
     let registration: AdapterRegistrationHandle | undefined
