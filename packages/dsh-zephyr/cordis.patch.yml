@@ -81,6 +81,10 @@
             name: '@liyang8246/dsh-zephyr/uv-run'
           - id: tool-jobs
             name: '@deepseek-ai/dsh-tool-jobs'
+          - id: tool-todo
+            name: '@deepseek-ai/dsh-tool-todo'
+            config:
+              allowParallelInProgress: true
           - id: zephyr-subagent
             name: '@deepseek-ai/dsh-tool-subagent'
             config:
