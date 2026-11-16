@@ -108,7 +108,6 @@ export interface LoginAttempt extends LoginView {
 export interface AccountSnapshot {
   channels: readonly Channel[]
   accounts: AccountView[]
-  catalog: { source: string, generatedAt: string, sha256: string }
   /** Saved model-name filter; empty offers every model. Absent from a Host that predates it. */
   filter?: string
   login?: LoginView

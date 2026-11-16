@@ -1,7 +1,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type { AccountSnapshot, CatalogModel, ChannelId, ModelCatalog, QuotaView } from '../shared/types.js'
 import { setTimeout as delay } from 'node:timers/promises'
-import { catalogMetadata, modelCatalog } from '../providers/catalog.generated.js'
+import { modelCatalog } from '../providers/catalog.js'
 import { fetchCodexModels } from '../providers/codex-models.js'
 import { fetchCommandCodeQuota } from '../providers/commandcode/quota.js'
 import { refreshOpenAI } from '../providers/openai.js'
@@ -52,7 +52,6 @@ export class ModelAccountsService {
             : {}),
         }
       }),
-      catalog: catalogMetadata,
       filter,
     }
   }
