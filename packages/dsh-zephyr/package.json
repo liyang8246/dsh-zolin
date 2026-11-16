@@ -25,7 +25,7 @@
   ],
   "engines": {
     "node": ">=22.19.0",
-    "dsh": ">=0.2.2-rc.1 <0.3.0"
+    "dsh": ">=0.2.2-rc.3 <0.3.0"
   },
   "scripts": {
     "build": "tsdown",
@@ -37,17 +37,17 @@
     }
   },
   "dependencies": {
-    "@joplin/turndown-plugin-gfm": "^1.0.68",
-    "playwright-core": "^1.64.1",
-    "turndown": "^7.2.4"
+    "@joplin/turndown-plugin-gfm": "^1.0.71",
+    "playwright-core": "^1.65.1",
+    "turndown": "^7.2.5"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.1.0",
-    "@deepseek-ai/dsh-sandbox-policy": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-shell": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-system-prompt": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-tools": "0.2.2-rc.1",
-    "@deepseek-ai/dsh-working-directory": "0.2.2-rc.1",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-shell": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-system-prompt": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.3",
+    "@deepseek-ai/dsh-working-directory": "0.2.2-rc.3",
     "@types/turndown": "^5.0.6"
   }
 }
