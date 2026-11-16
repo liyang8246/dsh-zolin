@@ -79,7 +79,7 @@ function readQuotas(value: unknown): Record<string, QuotaView> {
       fetchedAt: view.fetchedAt,
       windows: view.windows.flatMap(readWindow),
     }
-    for (const key of ['reason', 'plan'] as const) {
+    for (const key of ['reason', 'plan', 'planExpiresAt'] as const) {
       if (typeof view[key] === 'string')
         quota[key] = view[key]
     }

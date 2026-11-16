@@ -37,7 +37,7 @@ function isQuotaWindow(value: unknown): value is QuotaWindow {
 function isQuota(value: unknown): value is QuotaView {
   return isObject(value) && (value.status === 'ok' || value.status === 'unavailable' || value.status === 'error')
     && typeof value.fetchedAt === 'string' && Array.isArray(value.windows) && value.windows.every(isQuotaWindow)
-    && optionalString(value.reason) && optionalString(value.plan) && optionalNumber(value.resetCredits)
+    && optionalString(value.reason) && optionalString(value.plan) && optionalString(value.planExpiresAt) && optionalNumber(value.resetCredits)
 }
 
 function isAccount(value: unknown): value is AccountView {
@@ -115,6 +115,28 @@ export function activeQuota(snapshot: AccountSnapshot | undefined, channel: Chan
   if (!quota)
     return []
   return measuredWindows(quota.windows)
+}
+
+/**
+ * Label for the plan pill: the plan name plus the whole days left on the
+ * subscription, e.g. `plus · 12d`.
+ * @param quota - the account quota carrying the plan metadata.
+ * @param now - current time, injectable for tests.
+ * @returns the label, or an empty string when the quota names no plan.
+ */
+export function planPill(quota: QuotaView | undefined, now = Date.now()): string {
+  const expires = quota?.planExpiresAt === undefined
+    ? undefined
+    : Date.parse(quota.planExpiresAt)
+  const days = expires === undefined || !Number.isFinite(expires)
+    ? undefined
+    : Math.max(0, Math.ceil((expires - now) / 86_400_000))
+  return [
+    quota?.plan,
+    days === undefined
+      ? undefined
+      : `${days}d`,
+  ].filter(Boolean).join(' · ')
 }
 
 export function leftOf(window: MeasuredQuotaWindow): number {

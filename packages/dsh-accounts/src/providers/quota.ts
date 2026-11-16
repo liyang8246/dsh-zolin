@@ -4,6 +4,7 @@ import { fetchJSON, ProviderHTTPError } from '../shared/http.js'
 import { record } from '../shared/validation.js'
 
 const CODEX_USAGE_URL = 'https://chatgpt.com/backend-api/wham/usage'
+const CODEX_ACCOUNTS_URL = 'https://chatgpt.com/backend-api/accounts/check/v4-2023-04-27'
 const CODEX_RESET_CREDITS_URL = 'https://chatgpt.com/backend-api/wham/rate-limit-reset-credits/consume'
 
 function codexHeaders(account: StoredAccount): Record<string, string> {
@@ -92,6 +93,25 @@ export function parseOpenAIQuota(input: unknown): QuotaView {
   }
 }
 
+/**
+ * Read the paid subscription end from the accounts payload.
+ * @param input - the `accounts/check` response.
+ * @param accountId - the signed-in account, whose entry wins over `default`.
+ * @returns ISO end time, or undefined when the payload carries none.
+ */
+export function parseSubscriptionExpiry(input: unknown, accountId?: string): string | undefined {
+  const all = (input as { accounts?: Record<string, { entitlement?: { expires_at?: unknown } }> } | null)?.accounts
+  const keys = accountId
+    ? [accountId, 'default']
+    : ['default']
+  for (const key of keys) {
+    const at = reset(all?.[key]?.entitlement?.expires_at)
+    if (at)
+      return at
+  }
+  return undefined
+}
+
 export function parseOpenCodeQuota(input: unknown): QuotaView {
   const body = record(input, 'OpenCode usage')
   const usage = record(body.usage, 'OpenCode usage windows')
@@ -131,9 +151,19 @@ export async function fetchQuota(account: StoredAccount, signal?: AbortSignal): 
   if (account.channel === 'commandcode-go')
     throw new Error('Use the CommandCode quota adapter')
   if (account.channel === 'openai-codex') {
-    return parseOpenAIQuota(await fetchJSON(CODEX_USAGE_URL, {
-      headers: codexHeaders(account),
-    }, signal))
+    const headers = codexHeaders(account)
+    const [quota, planExpiresAt] = await Promise.all([
+      fetchJSON(CODEX_USAGE_URL, { headers }, signal).then(parseOpenAIQuota),
+      // Subscription metadata is a nicety: losing it must not cost the quota windows.
+      fetchJSON(CODEX_ACCOUNTS_URL, { headers }, signal)
+        .then(payload => parseSubscriptionExpiry(payload, account.credential.kind === 'oauth'
+          ? account.credential.tokens.accountId
+          : undefined))
+        .catch(() => undefined),
+    ])
+    return planExpiresAt
+      ? { ...quota, planExpiresAt }
+      : quota
   }
   const token = account.credential.kind === 'api-key'
     ? account.credential.key

@@ -6,7 +6,7 @@ import type { ModelFilter } from './model-filter.js'
 import type { AccountStore, ClientRequest, QuotaProps } from './types.js'
 import { call } from './api.js'
 import { css } from './constants.js'
-import { authorizationURL, isLoginRequest } from './data.js'
+import { authorizationURL, isLoginRequest, planPill } from './data.js'
 
 export function createAccountsPage(
   React: typeof import('react'),
@@ -240,7 +240,7 @@ export function createAccountsPage(
                           <input type="radio" name={`zph-${channel.id}`} checked={account.active} disabled={busy} onChange={() => { void run({ action: 'activate', channel: channel.id, id: account.id }) }} />
                           <strong>{account.label}</strong>
                         </label>
-                        {account.quota?.plan && <span className="zph-pill">{account.quota.plan}</span>}
+                        {planPill(account.quota) && <span className="zph-pill">{planPill(account.quota)}</span>}
                         <div className="zph-actions">
                           {typeof account.quota?.resetCredits === 'number' && (
                             <button
