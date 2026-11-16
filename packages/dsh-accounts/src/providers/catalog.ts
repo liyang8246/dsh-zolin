@@ -57,7 +57,7 @@ export const modelCatalog: ModelCatalog = {
     },
     {
       id: 'deepseek-v4.1-flash',
-      name: 'DeepSeek V4.1 Flash',
+      name: 'DeepSeek V4.1 Flash 1017',
       contextWindow: 1000000,
       maxTokens: 384000,
       input: [
@@ -207,6 +207,21 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'hy4',
+      name: 'Hy4',
+      contextWindow: 1048576,
+      maxTokens: 65536,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'none',
+        'high',
+      ],
+    },
+    {
       id: 'hy4-preview',
       name: 'Hy4 preview',
       contextWindow: 1024000,
@@ -248,7 +263,7 @@ export const modelCatalog: ModelCatalog = {
       id: 'kimi-k3',
       name: 'Kimi K3',
       contextWindow: 1048576,
-      maxTokens: 131072,
+      maxTokens: 1048576,
       input: [
         'text',
         'image',
@@ -263,7 +278,7 @@ export const modelCatalog: ModelCatalog = {
       id: 'kimi-k3.1-pro',
       name: 'Kimi K3.1 Pro',
       contextWindow: 1048576,
-      maxTokens: 131072,
+      maxTokens: 1048576,
       input: [
         'text',
         'image',
@@ -283,6 +298,19 @@ export const modelCatalog: ModelCatalog = {
       maxTokens: 131072,
       input: [
         'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+      reasoningField: 'reasoning_content',
+    },
+    {
+      id: 'longcat-2.5-free',
+      name: 'LongCat 2.5 Free',
+      contextWindow: 1000000,
+      maxTokens: 262144,
+      input: [
+        'text',
+        'image',
       ],
       reasoning: true,
       reasoningEfforts: [],
@@ -447,6 +475,22 @@ export const modelCatalog: ModelCatalog = {
       reasoningEfforts: [
         'low',
         'medium',
+        'xhigh',
+      ],
+    },
+    {
+      id: 'qwen4-max',
+      name: 'Qwen4 Max',
+      contextWindow: 1000000,
+      maxTokens: 262144,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'high',
         'xhigh',
       ],
     },
@@ -1078,6 +1122,32 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'inclusionai/ling-3.1-flash',
+      name: 'Ling 3.1 Flash',
+      contextWindow: 262144,
+      maxTokens: 32768,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'medium',
+        'high',
+      ],
+    },
+    {
+      id: 'meituan/LongCat-2.0',
+      name: 'LongCat-2.0',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
       id: 'meta/muse-spark-1.1',
       name: 'Muse Spark 1.1',
       contextWindow: 1048576,
@@ -1164,10 +1234,45 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'meta/muse-spark-open',
+      name: 'Muse Spark Open',
+      contextWindow: 1048576,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+      ],
+    },
+    {
       id: 'meta/muse-wonder-1.0',
       name: 'Muse Wonder',
       contextWindow: 1048576,
       maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+        'max',
+      ],
+    },
+    {
+      id: 'minimax/minimax-m3.1-flash',
+      name: 'MiniMax-M3.1-Flash',
+      contextWindow: 1000000,
+      maxTokens: 512000,
       input: [
         'text',
         'image',
@@ -1230,6 +1335,30 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'moonshotai/Kimi-K2.5',
+      name: 'Kimi K2.5',
+      contextWindow: 256000,
+      maxTokens: 256000,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'moonshotai/Kimi-K2.6',
+      name: 'Kimi K2.6',
+      contextWindow: 256000,
+      maxTokens: 256000,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
       id: 'moonshotai/Kimi-K2.7-Code',
       name: 'Kimi K2.7 Code',
       contextWindow: 256000,
@@ -1257,7 +1386,23 @@ export const modelCatalog: ModelCatalog = {
       id: 'moonshotai/Kimi-K3',
       name: 'Kimi K3',
       contextWindow: 1000000,
-      maxTokens: 131072,
+      maxTokens: 1000000,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'high',
+        'max',
+      ],
+    },
+    {
+      id: 'moonshotai/Kimi-K3.1-Pro',
+      name: 'Kimi K3.1 Pro',
+      contextWindow: 1048576,
+      maxTokens: 1048576,
       input: [
         'text',
         'image',
@@ -1276,6 +1421,88 @@ export const modelCatalog: ModelCatalog = {
       maxTokens: 128000,
       input: [
         'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'nvidia/nemotron-3.5-super-vl',
+      name: 'Nemotron 3.5 Super VL 120B A12B',
+      contextWindow: 262144,
+      maxTokens: 8192,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'ornith/ornith-1.5-122b',
+      name: 'Ornith 1.5 122B',
+      contextWindow: 262144,
+      maxTokens: 32768,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'poolside/laguna-s-2.1-free',
+      name: 'Laguna S 2.1',
+      contextWindow: 256000,
+      maxTokens: 32768,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'Qwen/Qwen3.6-Plus',
+      name: 'Qwen3.6 Plus',
+      contextWindow: 200000,
+      maxTokens: 65536,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'Qwen/Qwen3.7-Flash',
+      name: 'Qwen3.7 Flash',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'Qwen/Qwen3.7-Max',
+      name: 'Qwen3.7 Max',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'Qwen/Qwen3.7-Plus',
+      name: 'Qwen3.7 Plus',
+      contextWindow: 1000000,
+      maxTokens: 64000,
+      input: [
+        'text',
+        'image',
       ],
       reasoning: true,
       reasoningEfforts: [],
@@ -1345,6 +1572,18 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'Qwen/Qwen3.8-Max-Prime',
+      name: 'Qwen 3.8 Max Prime',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
       id: 'Qwen/Qwen3.8-Omni-Flash',
       name: 'Qwen3.8 Omni Flash',
       contextWindow: 1000000,
@@ -1361,6 +1600,23 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'reflection/beam:free',
+      name: 'Beam 1.0',
+      contextWindow: 1048576,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+        'max',
+      ],
+    },
+    {
       id: 'sakana/fugu-ultra',
       name: 'Fugu Ultra',
       contextWindow: 1000000,
@@ -1371,6 +1627,22 @@ export const modelCatalog: ModelCatalog = {
       ],
       reasoning: true,
       reasoningEfforts: [
+        'high',
+        'xhigh',
+      ],
+    },
+    {
+      id: 'stealth/glyph-cluster:free',
+      name: 'Glyph Cluster',
+      contextWindow: 256000,
+      maxTokens: 256000,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'medium',
         'high',
         'xhigh',
       ],
@@ -1533,6 +1805,42 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
+      id: 'xiaomi/mimo-v2.6-flash',
+      name: 'MiMo-V2.6-Flash',
+      contextWindow: 1048576,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'xiaomi/mimo-v2.6-pro',
+      name: 'MiMo-V2.6-Pro',
+      contextWindow: 1048576,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
+      id: 'xiaomi/mimo-v2.6-pro-ultraspeed',
+      name: 'MiMo-V2.6-Pro-UltraSpeed',
+      contextWindow: 1048576,
+      maxTokens: 131072,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
+    },
+    {
       id: 'z-ai/glm-5.3-flash',
       name: 'GLM-5.3-Flash',
       contextWindow: 1000000,
@@ -1563,6 +1871,17 @@ export const modelCatalog: ModelCatalog = {
         'high',
         'max',
       ],
+    },
+    {
+      id: 'zai-org/GLM-5',
+      name: 'GLM-5',
+      contextWindow: 200000,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [],
     },
     {
       id: 'zai-org/GLM-5.2',
