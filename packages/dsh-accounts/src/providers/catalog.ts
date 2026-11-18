@@ -4,24 +4,6 @@ import type { ModelCatalog } from '../shared/types.js'
 export const modelCatalog: ModelCatalog = {
   'openai': [
     {
-      id: 'gpt-6-astra',
-      name: 'GPT-6 Astra',
-      contextWindow: 1050000,
-      maxTokens: 128000,
-      input: [
-        'text',
-        'image',
-      ],
-      reasoning: true,
-      reasoningEfforts: [
-        'low',
-        'medium',
-        'high',
-        'xhigh',
-        'max',
-      ],
-    },
-    {
       id: 'gpt-6-luna',
       name: 'GPT-6 Luna',
       contextWindow: 1050000,
@@ -60,8 +42,27 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
-      id: 'gpt-6.1-sol',
-      name: 'GPT-6.1 Sol',
+      id: 'gpt-6.1-terra',
+      name: 'GPT-6.1 Terra',
+      contextWindow: 1050000,
+      maxTokens: 128000,
+      input: [
+        'text',
+        'image',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'none',
+        'low',
+        'medium',
+        'high',
+        'xhigh',
+        'max',
+      ],
+    },
+    {
+      id: 'gpt-6.2-sol',
+      name: 'GPT-6.2 Sol',
       contextWindow: 1050000,
       maxTokens: 128000,
       input: [
@@ -78,8 +79,8 @@ export const modelCatalog: ModelCatalog = {
       ],
     },
     {
-      id: 'gpt-6.1-terra',
-      name: 'GPT-6.1 Terra',
+      id: 'gpt-6.2-astra',
+      name: 'GPT-6.2 Astra',
       contextWindow: 1050000,
       maxTokens: 128000,
       input: [
@@ -88,7 +89,6 @@ export const modelCatalog: ModelCatalog = {
       ],
       reasoning: true,
       reasoningEfforts: [
-        'none',
         'low',
         'medium',
         'high',
@@ -227,6 +227,22 @@ export const modelCatalog: ModelCatalog = {
       ],
       reasoning: true,
       reasoningEfforts: [],
+    },
+    {
+      id: 'glm-5.3',
+      name: 'GLM-5.3',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'high',
+        'max',
+      ],
+      reasoningField: 'reasoning_content',
     },
     {
       id: 'glm-5.3-flash',
@@ -420,6 +436,21 @@ export const modelCatalog: ModelCatalog = {
       ],
       reasoning: true,
       reasoningEfforts: [],
+    },
+    {
+      id: 'zai-org/GLM-5.3',
+      name: 'GLM-5.3',
+      contextWindow: 1000000,
+      maxTokens: 131072,
+      input: [
+        'text',
+      ],
+      reasoning: true,
+      reasoningEfforts: [
+        'low',
+        'high',
+        'max',
+      ],
     },
     {
       id: 'z-ai/glm-5.3-flash',
